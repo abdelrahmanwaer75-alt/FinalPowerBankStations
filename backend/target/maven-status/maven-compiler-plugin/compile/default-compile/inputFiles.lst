@@ -6,6 +6,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\admin\ReturnRev
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\config\SecurityConfig.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\AdminController.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\AuthController.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\CustomerController.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\PricingController.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\RentalController.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\ReservationController.java
@@ -15,8 +16,10 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\AddPowerBan
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\AdminReturnRow.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\AuthResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\AvailabilityResponse.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\ChangePasswordRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\CreateReservationRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\CreateReturnRequest.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\CustomerProfileResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\ImageResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\LoginRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\PricingResponse.java
@@ -29,6 +32,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\ReviewReque
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\StartRentalRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\StationResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\StationUpsertRequest.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\UpdateProfileRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\UserSummary.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\AccountStatus.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\AuditLog.java
@@ -68,6 +72,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\security\Curren
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\security\JwtAuthFilter.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\security\JwtService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\AuthService.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\CustomerService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\PricingCalculator.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\RentalService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\ReservationService.java

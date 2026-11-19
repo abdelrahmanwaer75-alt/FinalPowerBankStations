@@ -26,3 +26,6 @@ app:
   uploads:
     # Inspection photos are stored here, outside the web root. They are never served directly.
     dir: ${UPLOAD_DIR:./uploads}
+    spring:
+  profiles:
+    active: local

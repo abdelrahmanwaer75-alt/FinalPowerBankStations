@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    username: root
+    password:752006aA@
+
+app:
+  jwt:
+    secret: AbdelrahmanMohamedAhmedElsayedWaer_abcXYZ123secretKey2026_dev_only
