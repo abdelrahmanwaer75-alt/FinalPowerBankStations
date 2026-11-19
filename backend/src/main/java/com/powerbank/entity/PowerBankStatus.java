@@ -1,0 +1,5 @@
+package com.powerbank.entity;
+
+public enum PowerBankStatus {
+    AVAILABLE, RESERVED, RENTED, RETURNED_PENDING_REVIEW, UNDER_MAINTENANCE, UNAVAILABLE, RETIRED
+}

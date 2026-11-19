@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Choose a station and return your PowerBank.">
+    <title>Return PowerBank | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/details.css">
+    <link rel="stylesheet" href="css/rental.css">
+    <link rel="stylesheet" href="css/return.css">
+</head>
+<body class="details-page">
+
+<header class="auth-header">
+    <a class="auth-brand" href="map.html"><span class="bolt">⚡</span> PowerBank Stations</a>
+    <nav class="app-links">
+        <a href="map.html">Map</a>
+        <a href="rentals.html" class="active">My Rental</a>
+        <a href="rentals.html">History</a>
+        <a href="login.html" class="sign-link">Sign in</a>
+    </nav>
+</header>
+
+<main class="details-main">
+    <div class="status-bar">
+        <div>
+            <span class="label">Docking and return</span>
+            <h1>Return your PowerBank</h1>
+            <p class="muted-lg">Choose a station with a free slot. Then insert the PowerBank into an empty bay.</p>
+        </div>
+        <div class="unit-pill"><span>Unit</span><strong id="unit">—</strong></div>
+    </div>
+
+    <div id="banner" class="data-banner" hidden></div>
+
+    <div class="grid-main" id="content" hidden>
+        <div class="col-left">
+            <h2>Select return station</h2>
+            <ul class="station-pick" id="stations"></ul>
+        </div>
+
+        <aside class="col-right">
+            <section class="card">
+                <h2>Rental summary</h2>
+                <div class="line"><span>Reference</span><strong id="ref">—</strong></div>
+                <div class="line"><span>Started</span><strong id="started">—</strong></div>
+                <div class="line"><span>Duration so far</span><strong id="duration">—</strong></div>
+                <div class="line"><span>Rate</span><strong id="rate">—</strong></div>
+                <div class="total">
+                    <span class="label">Estimated total</span>
+                    <strong id="total">—</strong>
+                </div>
+                <p class="note">The final total is calculated when you confirm. Your rental stays in your history.</p>
+            </section>
+
+            <button class="btn-danger" type="button" id="confirm" disabled>Confirm return</button>
+            <a class="btn-secondary" href="active-rental.html">Back to active rental</a>
+        </aside>
+    </div>
+
+    <section class="card empty" id="empty" hidden>
+        <h2>No rental to return</h2>
+        <p>Open your active rental to return a PowerBank.</p>
+        <a class="btn-primary" href="active-rental.html">Go to active rental</a>
+    </section>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/common.js"></script>
+<script src="js/return.js"></script>
+</body>
+</html>

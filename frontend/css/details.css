@@ -1,0 +1,73 @@
+/* Station details page. Follows the Figma "Station Details - Desktop" layout. */
+
+body.details-page { margin: 0; min-height: 100vh; background: #f8f9ff; font-family: var(--font-sans); color: #191c20; }
+.details-main { max-width: 1280px; margin: 0 auto; padding: 24px 32px 48px; display: flex; flex-direction: column; gap: 24px; }
+.app-links { display: flex; gap: 8px; align-items: center; }
+.app-links a { padding: 8px 14px; border-radius: 8px; color: #424754; text-decoration: none; font-size: 14px; font-weight: 600; }
+.app-links a.sign-link { background: #1f6feb; color: #fffcff; }
+
+.crumbs { margin: 0; font-size: 12px; color: #424754; display: flex; gap: 6px; flex-wrap: wrap; }
+.crumbs a { color: #424754; text-decoration: none; }
+.crumbs span { color: #c2c6d6; }
+
+.data-banner { padding: 10px 14px; border-radius: 8px; background: #ffddb4; color: #815300; font-size: 13px; font-weight: 600; }
+.card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.card h2 { margin: 0 0 8px; font-size: 20px; font-weight: 600; }
+.muted { color: #424754; font-size: 13px; margin: 0 0 12px; }
+.small { font-size: 12px; }
+
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.chip { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: #eceef3; color: #424754; }
+.chip.ok { background: rgba(134,249,188,0.4); color: #00734a; border-radius: 999px; }
+.chip.warn { background: #ffddb4; color: #815300; }
+.chip.bad { background: #ffdad6; color: #93000a; }
+
+.hero h1 { margin: 0; font-size: 32px; font-weight: 600; letter-spacing: -0.8px; }
+.address { margin: 6px 0 0; font-size: 14px; color: #424754; }
+.meta { margin: 6px 0 0; font-size: 12px; color: #424754; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 20px 0; }
+.stat { background: #f2f3f9; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+.stat span { font-size: 11px; color: #424754; font-weight: 600; }
+.stat strong { font-size: 24px; font-weight: 600; }
+.stat small { font-size: 11px; color: #424754; }
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.duration { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: #424754; }
+.duration select { height: 44px; border-radius: 8px; border: 1px solid #c2c6d6; padding: 0 10px; font: inherit; background: #fff; }
+.btn-primary, .btn-secondary {
+    height: 44px; padding: 0 20px; border-radius: 8px; font: inherit; font-size: 14px; font-weight: 600;
+    display: inline-flex; align-items: center; text-decoration: none; cursor: pointer; border: 0;
+}
+.btn-primary { background: #1f6feb; color: #fffcff; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-secondary { background: #eceef3; color: #191c20; }
+
+.grid-two { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; }
+
+.bays { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin: 12px 0; }
+.bay { height: 28px; border-radius: 4px; display: grid; place-items: center; font-size: 11px; font-weight: 700; font-family: ui-monospace, Consolas, monospace; }
+.bay.on { background: #006c45; color: #fff; }
+.bay.off { background: #e1e2e8; color: #424754; }
+.legend { display: flex; gap: 14px; font-size: 11px; color: #424754; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+.sw-green { background: #006c45; } .sw-grey { background: #e1e2e8; }
+
+.map-box { height: 300px; border-radius: 12px; overflow: hidden; background: #eef2f7; position: relative; }
+.map-note { padding: 16px; font-size: 13px; color: #424754; margin: 0; }
+
+.rates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.rate { background: #f2f3f9; border-radius: 8px; padding: 14px; text-align: center; display: flex; flex-direction: column; gap: 4px; }
+.rate span { font-size: 12px; color: #424754; }
+.rate strong { font-size: 22px; font-weight: 600; color: #0057c3; }
+.rate small { font-size: 11px; color: #424754; }
+
+@media (max-width: 900px) {
+    .grid-two { grid-template-columns: 1fr; }
+    .details-main { padding: 16px; }
+}
+@media (max-width: 520px) {
+    .stats, .rates { grid-template-columns: 1fr; }
+    .bays { grid-template-columns: repeat(4, 1fr); }
+    .hero h1 { font-size: 24px; }
+}

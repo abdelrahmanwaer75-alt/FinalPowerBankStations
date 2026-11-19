@@ -1,0 +1,24 @@
+/* Profile and settings. Follows the Figma "Profile and Settings - Desktop" layout (fields the backend does not store are left out). */
+
+.head { display: flex; align-items: center; gap: 20px; }
+.head h1 { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.4px; }
+.avatar { width: 80px; height: 80px; border-radius: 50%; background: #1f6feb; color: #fffcff; display: grid; place-items: center; font-size: 24px; font-weight: 700; flex: 0 0 auto; }
+.grid-main { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.col-left, .col-right { display: flex; flex-direction: column; gap: 24px; }
+.card h2 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; font-size: 12px; font-weight: 600; color: #191c20; }
+.field input { height: 44px; border-radius: 8px; border: 1px solid #c2c6d6; padding: 0 14px; font: inherit; font-size: 14px; background: #fff; }
+.field input:disabled { background: #f2f3f9; color: #424754; }
+.field-error { color: #ba1a1a; font-size: 12px; font-weight: 600; min-height: 16px; margin: 8px 0 0; }
+.field-error.ok { color: #006c45; }
+.seg { display: flex; gap: 6px; background: #f2f3f9; border-radius: 12px; padding: 4px; margin-top: 12px; }
+.seg button { flex: 1; height: 42px; border: 0; border-radius: 8px; background: transparent; font: inherit; font-weight: 600; color: #424754; cursor: pointer; }
+.seg button.on { background: #1f6feb; color: #fffcff; }
+.seg button:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { margin-top: 14px; height: 46px; padding: 0 20px; border: 0; border-radius: 8px; background: #1f6feb; color: #fffcff; font: inherit; font-weight: 600; cursor: pointer; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-secondary { margin-top: 12px; height: 44px; padding: 0 18px; border: 0; border-radius: 8px; background: #eceef3; color: #191c20; font: inherit; font-weight: 600; cursor: pointer; }
+.empty { text-align: center; padding: 40px 24px; }
+.empty p { color: #424754; }
+.empty .btn-primary { display: inline-flex; align-items: center; text-decoration: none; }
+@media (max-width: 900px) { .grid-main { grid-template-columns: 1fr; } }

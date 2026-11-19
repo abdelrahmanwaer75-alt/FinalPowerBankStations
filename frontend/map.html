@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find nearby PowerBank stations on the map and check available units.">
+    <title>Stations Map | PowerBank Stations</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/map.css">
+</head>
+
+<body class="map-page">
+
+<header class="app-header">
+    <div class="app-header__left">
+        <a class="brand" href="index.html">
+            <span class="brand-mark" aria-hidden="true">⚡</span>
+            <span class="brand-text">
+                <strong>PowerBank Stations</strong>
+                <small><span class="dot"></span> Network Active</small>
+            </span>
+        </a>
+
+        <nav class="app-nav" aria-label="Main navigation">
+            <a class="active" href="map.html">Map</a>
+            <a href="rentals.html">My Rental</a>
+            <a href="rentals.html">History</a>
+            <a href="login.html">Profile</a>
+        </nav>
+    </div>
+
+    <div class="app-header__right">
+        <div class="lang-switch" role="group" aria-label="Language">
+            <button type="button" class="is-active" aria-pressed="true">EN</button>
+            <span aria-hidden="true">|</span>
+            <button type="button" aria-pressed="false" disabled title="Arabic layout comes in a later batch">العربية</button>
+        </div>
+        <a class="icon-btn" href="rentals.html" aria-label="Notifications">🔔</a>
+        <a class="user-chip" href="login.html">
+            <span class="user-avatar" aria-hidden="true">👤</span>
+            <span class="user-text">
+                <strong>Guest</strong>
+                <small>Sign in</small>
+            </span>
+        </a>
+    </div>
+</header>
+
+<p id="data-banner" class="data-banner" hidden></p>
+<main class="map-layout">
+
+    <!-- Left panel -->
+    <aside class="map-side" aria-label="Station list">
+
+        <div class="side-top">
+            <div class="side-title-row">
+                <div class="side-title">
+                    <span class="dot"></span>
+                    <h1>Stations in Cairo</h1>
+                    <span class="count-pill" id="total-count">0</span>
+                </div>
+                <span class="muted-small">Filter</span>
+            </div>
+
+            <label class="search-field">
+                <span aria-hidden="true">⌕</span>
+                <input id="station-search" type="search" placeholder="Search by name or area" aria-label="Search stations">
+            </label>
+
+            <div class="chip-row" role="group" aria-label="Distance">
+                <button type="button" class="chip" data-radius="1">1 km</button>
+                <button type="button" class="chip is-active" data-radius="3">3 km</button>
+                <button type="button" class="chip" data-radius="5">5 km</button>
+                <button type="button" class="chip" data-radius="all">All Cairo</button>
+            </div>
+
+            <label class="switch-row">
+                <span>Units available only</span>
+                <input type="checkbox" id="units-only" class="switch">
+            </label>
+        </div>
+
+        <div class="metrics-bar">
+            <span id="metric-showing">Showing 0</span>
+            <span class="metrics-right">
+                <span class="green" id="metric-units">0 PowerBanks</span>
+                <span class="blue" id="metric-empty">0 Empty bays</span>
+            </span>
+        </div>
+
+        <ul class="station-list" id="station-list"></ul>
+
+        <div class="side-footer">
+            <span>Sample data until the backend is connected</span>
+            <span id="last-updated"></span>
+        </div>
+    </aside>
+
+    <!-- Map -->
+    <section class="map-stage" aria-label="Map">
+
+        <div id="map" class="map-canvas" role="region" aria-label="Google Map of charging stations"></div>
+
+        <div id="map-fallback" class="map-fallback" hidden>
+            <h2>Map unavailable</h2>
+            <p id="map-fallback-text"></p>
+        </div>
+
+        <div class="map-top">
+            <div class="filter-pills" role="group" aria-label="Station filter">
+                <button type="button" class="pill is-dark" data-mode="all">All (<span id="pill-all">0</span>)</button>
+                <button type="button" class="pill" data-mode="units"><span class="dot green"></span> With Units (<span id="pill-units">0</span>)</button>
+                <button type="button" class="pill" data-mode="returns"><span class="dot blue"></span> With Return Slots (<span id="pill-returns">0</span>)</button>
+            </div>
+            <button type="button" class="near-me" id="near-me">📍 Near me</button>
+        </div>
+
+        <div class="map-controls" aria-label="Map controls">
+            <button type="button" class="ctl" id="recenter" aria-label="Recenter">◎</button>
+            <button type="button" class="ctl" id="zoom-in" aria-label="Zoom in">+</button>
+            <button type="button" class="ctl" id="zoom-out" aria-label="Zoom out">−</button>
+        </div>
+
+        <div class="legend">
+            <div><span class="dot green"></span> Units available</div>
+            <div><span class="dot gray"></span> Drop-off only (0 units)</div>
+            <div><span class="dot blue"></span> Your location</div>
+        </div>
+    </section>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/common.js"></script>
+<script src="js/stations-data.js"></script>
+<script src="js/map.js"></script>
+</body>
+</html>

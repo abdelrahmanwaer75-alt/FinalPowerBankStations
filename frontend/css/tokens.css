@@ -1,0 +1,61 @@
+/* Design tokens from the Figma file (Inter; primary #1f6feb; green #006c45).
+   Light is the default. Dark follows [data-theme="dark"] on <html>. */
+
+:root {
+    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --color-primary: #1f6feb;
+    --color-primary-strong: #0057c3;
+    --color-on-primary: #fffcff;
+    --color-green: #006c45;
+    --color-mint: #86f9bc;
+    --color-on-mint: #002112;
+    --color-chip-blue: #d9e2ff;
+    --color-on-chip-blue: #001944;
+
+    --color-bg: #f8f9ff;
+    --color-surface: #ffffff;
+    --color-surface-low: #f2f3f9;
+    --color-surface-high: #e6e8ed;
+    --color-ink: #191c20;
+    --color-muted: #424754;
+    --color-faint: #727786;
+    --color-danger: #ba1a1a;
+    --color-warning: #815300;
+    --color-warning-bg: #ffddb4;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-pill: 9999px;
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-float: 0 12px 32px rgba(26, 29, 33, 0.18);
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+}
+
+[data-theme="dark"] {
+    --color-bg: #111418;
+    --color-surface: #1b1f24;
+    --color-surface-low: #22262c;
+    --color-surface-high: #2c3138;
+    --color-ink: #e4e6ec;
+    --color-muted: #b9bfcc;
+    --color-faint: #8b93a3;
+    --color-primary: #5b8cff;
+    --color-primary-strong: #3a6fe0;
+    --color-chip-blue: #1f3a6b;
+    --color-on-chip-blue: #d9e2ff;
+    --color-mint: #0f5a3b;
+    --color-on-mint: #c9ffe4;
+    --color-green: #3fcf8e;
+    color-scheme: dark;
+}
+
+body { font-family: var(--font-sans); background: var(--color-bg); color: var(--color-ink); }
