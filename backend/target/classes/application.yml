@@ -3,29 +3,39 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/powerbank_stations?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: ${DB_USER:root}
-    password: ${DB_PASSWORD:}
+    # Local MySQL. run-local.ps1 sets DB_URL, DB_USER and DB_PASSWORD.
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      connection-timeout: 15000
   jpa:
     hibernate:
-      # The schema is created by database/schema.sql. Hibernate must not change it.
       ddl-auto: none
     open-in-view: false
+    database-platform: org.hibernate.dialect.MySQLDialect
   servlet:
     multipart:
       max-file-size: 5MB
       max-request-size: 30MB
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${MAIL_SMTP_AUTH:true}
+      mail.smtp.starttls.enable: ${MAIL_SMTP_STARTTLS:true}
 
 app:
   jwt:
-    # Required. Set JWT_SECRET to a random string of at least 32 characters.
+    # Required. At least 32 characters. run-local.ps1 sets JWT_SECRET.
     secret: ${JWT_SECRET}
     ttl-minutes: 480
   cors:
     allowed-origins: http://localhost:3000,http://127.0.0.1:3000
   uploads:
-    # Inspection photos are stored here, outside the web root. They are never served directly.
     dir: ${UPLOAD_DIR:./uploads}
-    spring:
-  profiles:
-    active: local
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:}

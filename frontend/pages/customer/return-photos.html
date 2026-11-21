@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Upload return-condition photos for a PowerBank.">
+    <title>Return photos | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <link rel="stylesheet" href="../../css/details.css">
+    <link rel="stylesheet" href="../../css/workflow.css">
+</head>
+
+<body class="details-page">
+    <header class="auth-header"><a class="auth-brand" href="dashboard.html"><span class="bolt">⚡</span> PowerBank
+            Stations</a>
+        <nav class="app-links"><a href="map.html">Map</a><a href="active-rental.html">Active rental</a><a
+                href="profile.html">Profile</a></nav>
+    </header>
+    <main class="details-main">
+        <div id="banner" class="data-banner" hidden></div>
+        <section class="workflow-head">
+            <div>
+                <p class="label">Return inspection</p>
+                <h1>Document the PowerBank condition</h1>
+                <p class="muted-lg" id="return-summary">Loading return…</p>
+            </div><span id="status" class="review-status pending_review">Pending review</span>
+        </section>
+        <div class="workflow-grid" id="content" hidden>
+            <section class="card">
+                <h2>Photos of the returned PowerBank</h2>
+                <p class="muted">JPG or PNG, up to 5 MB each, maximum 6 photos. Images are stored securely and reviewed
+                    manually.</p><label class="upload-zone" for="files"><input id="files" type="file"
+                        accept="image/jpeg,image/png" multiple><span><strong>Choose photos</strong><br><small>or drag
+                            them here</small></span></label>
+                <div id="previews" class="preview-grid" aria-live="polite"></div>
+                <div class="actions" style="margin-top:16px"><button id="upload" class="btn-primary"
+                        type="button">Submit photos</button><a id="continue" class="btn-secondary" href="rentals.html">Continue to
+                        inspection status</a></div>
+            </section>
+            <aside class="card">
+                <h2>Return details</h2>
+                <ul id="return-details" class="record-list"></ul>
+                <p class="muted small">Uploaded photos cannot be changed after submission.</p>
+            </aside>
+        </div>
+        <section id="empty" class="card" hidden>
+            <h2>Return not found</h2>
+            <p class="muted">Open this page from a return you own.</p><a class="btn-primary" href="rentals.html">View
+                rentals</a>
+        </section>
+    </main>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/return-photos.js"></script>
+</body>
+
+</html>

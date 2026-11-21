@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find a nearby PowerBank station, reserve a power bank, and manage your rental.">
+    <meta name="theme-color" content="#f8f9ff">
+    <title>PowerBank Stations | Find power nearby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/home.css">
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/home.js" defer></script>
+</head>
+<body class="home-page">
+    <header class="home-header">
+        <a class="home-brand" href="index.html" aria-label="PowerBank Stations home">
+            <span class="home-brand-mark" aria-hidden="true">⚡</span><span>PowerBank <strong>Stations</strong></span>
+        </a>
+        <nav class="home-nav" aria-label="Main navigation">
+            <a class="is-current" href="index.html" aria-current="page">Home</a>
+            <a href="map.html">Find a station</a>
+            <a href="rentals.html">My rentals</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+        <a class="home-staff-link" href="login.html?mode=admin">Admin portal</a>
+        <a class="home-signin nav-button" href="login.html">Sign in</a>
+    </header>
+
+    <main>
+        <section class="home-hero" aria-labelledby="home-title">
+            <div class="home-hero-copy">
+                <p class="home-kicker"><span class="home-live-dot"></span> POWER WHEN YOU NEED IT</p>
+                <h1 id="home-title">A little more power.<br><span>A lot more freedom.</span></h1>
+                <p class="home-lead">Find a nearby station, reserve a PowerBank, and return it when you’re done. Your next charge is close.</p>
+                <div class="home-actions">
+                    <a class="home-button home-button-primary" href="map.html">Find a station <span aria-hidden="true">→</span></a>
+                    <a id="home-account-action" class="home-button home-button-secondary" href="register.html">Create an account</a>
+                </div>
+                <p class="home-signin-note">Already have an account? <a href="login.html">Log in</a></p>
+            </div>
+            <div class="home-hero-art" aria-label="Live PowerBank network summary">
+                <div class="home-orbit home-orbit-one"></div><div class="home-orbit home-orbit-two"></div>
+                <div class="home-device"><span class="home-device-light"></span><span class="home-battery" aria-hidden="true">ϟ</span><strong>POWERBANK</strong><small>READY TO GO</small></div>
+                <div class="home-floating-card home-card-top"><span class="home-card-icon">⌖</span><span><strong id="home-stations">—</strong><small>stations in network</small></span></div>
+                <div class="home-floating-card home-card-bottom"><span class="home-card-icon green">ϟ</span><span><strong id="home-available">—</strong><small>available to rent</small></span></div>
+                <span class="home-art-caption">Cairo · Giza · Alexandria</span>
+            </div>
+        </section>
+
+        <section class="home-network-strip" aria-label="Network information">
+            <p id="home-status" role="status" aria-live="polite">Connecting to the station network…</p>
+            <div class="home-network-stats"><span><strong id="home-price">—</strong><small>per-minute rate</small></span><span><strong>15 min</strong><small>reservation hold</small></span><span><strong>Any station</strong><small>return network</small></span></div>
+        </section>
+
+        <section class="home-how" id="how-it-works" aria-labelledby="how-title">
+            <div class="home-section-heading"><p class="home-kicker">SIMPLE FROM START TO FINISH</p><h2 id="how-title">Charge in three easy steps</h2><p>Everything you need is in one place, from finding a station to checking your return.</p></div>
+            <div class="home-steps">
+                <article class="home-step"><span class="home-step-number">01</span><span class="home-step-icon" aria-hidden="true">⌖</span><h3>Find a station</h3><p>Browse nearby stations and check current availability before you go.</p></article>
+                <article class="home-step"><span class="home-step-number">02</span><span class="home-step-icon" aria-hidden="true">ϟ</span><h3>Reserve &amp; rent</h3><p>Hold an available PowerBank, then start your rental at the station.</p></article>
+                <article class="home-step"><span class="home-step-number">03</span><span class="home-step-icon" aria-hidden="true">↩</span><h3>Return anywhere</h3><p>Return your PowerBank to an active station and track the review status.</p></article>
+            </div>
+        </section>
+
+        <section class="home-bottom-cta" aria-label="Find a station">
+            <div><p class="home-kicker">READY WHEN YOU ARE</p><h2>Keep your day moving.</h2><p>See stations and availability across the network.</p></div>
+            <a class="home-button home-button-dark" href="map.html">Explore the map <span aria-hidden="true">→</span></a>
+        </section>
+    </main>
+
+    <footer class="home-footer"><a class="home-brand" href="index.html"><span class="home-brand-mark" aria-hidden="true">⚡</span><span>PowerBank <strong>Stations</strong></span></a><span>PowerBank Stations Network</span><a href="map.html">Find a station</a></footer>
+</body>
+</html>

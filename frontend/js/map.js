@@ -1,6 +1,6 @@
 'use strict';
 
-/* Stations map: real Google Maps, list, filters, location, and reserving.
+/* Stations map: Leaflet + OpenStreetMap, list, filters, location, and reserving.
    Data comes from the backend. If the backend is unreachable, the sample data is used and a banner says so. */
 
 const CAIRO_CENTER = { lat: 30.0444, lng: 31.2357 };
@@ -17,7 +17,6 @@ const state = {
 
 let STATIONS = [];
 let map = null;
-let infoWindow = null;
 let userMarker = null;
 const markers = new Map();
 
@@ -54,7 +53,7 @@ function filteredStations() {
             if (s.distance > state.radiusKm) return false;
             if (state.unitsOnly && s.available === 0) return false;
             if (state.mode === 'units' && s.available === 0) return false;
-            if (state.mode === 'returns' && s.returnSlots === 0) return false;
+            if (state.mode === 'returns' && !(s.returnSlots > 0)) return false;
             return true;
         })
         .sort((a, b) => a.distance - b.distance);
@@ -70,7 +69,9 @@ function renderList() {
 
     $('metric-showing').textContent = `Showing ${list.length} sorted by closest`;
     $('metric-units').textContent = `${list.reduce((n, s) => n + s.available, 0)} PowerBanks`;
-    $('metric-empty').textContent = `${list.reduce((n, s) => n + Math.max(0, s.total - s.available), 0)} Empty bays`;
+    $('metric-empty').textContent = list.some((s) => s.returnSlots == null)
+        ? '— Empty bays'
+        : `${list.reduce((n, s) => n + s.returnSlots, 0)} Empty bays`;
 
     if (!list.length) {
         ul.innerHTML = '<li class="empty-list">No stations match these filters.</li>';
@@ -100,7 +101,7 @@ function renderList() {
                     <span class="badge">${esc(s.hours)}</span>
                 </div>
                 <div class="card-footer">
-                    <span class="price">${s.price != null ? `EGP ${s.price}` : '—'} <span>/ hr</span></span>
+                    <span class="price">${s.price != null ? `${PB.rateMoney(s.price)} / min` : '—'}</span>
                     <div class="card-actions">
                         <button type="button" class="btn btn-light" data-action="view" data-id="${esc(s.id)}">View on map</button>
                         <a class="btn btn-light" href="station-details.html?id=${esc(s.id)}">Details</a>
@@ -130,7 +131,7 @@ function infoHtml(s) {
             <p>${esc(s.address)} · ${formatDistance(s.distance)}</p>
             <div class="row">
                 <span class="badge ok">${s.available} available</span>
-                <span class="badge info">${s.returnSlots} return slots</span>
+                <span class="badge info">${s.returnSlots == null ? 'Availability unknown' : `${s.returnSlots} return slots`}</span>
             </div>
             <p style="margin-top:8px">${esc(s.hours)}${s.price != null ? ` · EGP ${s.price}/hr` : ''}</p>
             <div class="row">
@@ -142,25 +143,17 @@ function infoHtml(s) {
 }
 
 function drawMarkers() {
-    markers.forEach((m) => m.setMap(null));
+    markers.forEach((m) => map.removeLayer(m));
     markers.clear();
 
     STATIONS.forEach((s) => {
-        const marker = new google.maps.Marker({
-            position: { lat: s.lat, lng: s.lng },
-            map,
-            title: s.name,
-            label: { text: String(s.available), color: '#ffffff', fontWeight: '700', fontSize: '12px' },
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 14,
-                fillColor: stationColor(s),
-                fillOpacity: 1,
-                strokeColor: '#ffffff',
-                strokeWeight: 2
-            }
-        });
-        marker.addListener('click', () => selectStation(s.id, false));
+        const marker = L.circleMarker([s.lat, s.lng], {
+            radius: 15, color: '#ffffff', weight: 2,
+            fillColor: stationColor(s), fillOpacity: 1
+        }).addTo(map);
+        marker.bindTooltip(String(s.available), { permanent: true, direction: 'center', className: 'station-marker-label' });
+        marker.bindPopup(infoHtml({ ...s, distance: distanceKm(origin(), s) }));
+        marker.on('click', () => selectStation(s.id, false));
         markers.set(s.id, marker);
     });
 }
@@ -171,9 +164,8 @@ function selectStation(id, pan) {
     if (!s) return;
 
     if (map && markers.has(id)) {
-        if (pan) map.panTo({ lat: s.lat, lng: s.lng });
-        infoWindow.setContent(infoHtml(s));
-        infoWindow.open({ map, anchor: markers.get(id) });
+        if (pan) map.panTo([s.lat, s.lng]);
+        markers.get(id).setPopupContent(infoHtml(s)).openPopup();
     }
 
     renderList();
@@ -183,21 +175,10 @@ function selectStation(id, pan) {
 
 function placeUserMarker() {
     if (!map || !state.userPos) return;
-    if (userMarker) userMarker.setMap(null);
-    userMarker = new google.maps.Marker({
-        position: state.userPos,
-        map,
-        title: 'Your location',
-        icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 8,
-            fillColor: '#0057c3',
-            fillOpacity: 1,
-            strokeColor: '#ffffff',
-            strokeWeight: 3
-        },
-        zIndex: 999
-    });
+    if (userMarker) map.removeLayer(userMarker);
+    userMarker = L.circleMarker([state.userPos.lat, state.userPos.lng], {
+        radius: 8, color: '#ffffff', weight: 3, fillColor: '#0057c3', fillOpacity: 1
+    }).addTo(map).bindPopup('Your location');
 }
 
 function locateUser(thenPan) {
@@ -206,7 +187,7 @@ function locateUser(thenPan) {
         (pos) => {
             state.userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
             placeUserMarker();
-            if (thenPan && map) map.panTo(state.userPos);
+            if (thenPan && map) map.setView([state.userPos.lat, state.userPos.lng], Math.max(map.getZoom(), 14));
             renderList();
         },
         () => { /* permission denied: distances stay measured from central Cairo */ },
@@ -225,37 +206,18 @@ function showBanner(message) {
 }
 
 function initMap() {
-    map = new google.maps.Map($('map'), {
-        center: CAIRO_CENTER,
-        zoom: DEFAULT_ZOOM,
-        disableDefaultUI: true,
-        gestureHandling: 'greedy',
-        clickableIcons: false,
-        styles: [
-            { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-            { featureType: 'water', stylers: [{ color: '#c8dcf0' }] },
-            { featureType: 'landscape', stylers: [{ color: '#f1f4f8' }] }
-        ]
-    });
-    infoWindow = new google.maps.InfoWindow();
+    if (!window.L) {
+        showFallback('Leaflet could not be loaded. Check your internet connection; the station list is still available.');
+        return;
+    }
+    map = L.map($('map'), { zoomControl: false, scrollWheelZoom: true })
+        .setView([CAIRO_CENTER.lat, CAIRO_CENTER.lng], DEFAULT_ZOOM);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
     drawMarkers();
     locateUser(false);
-}
-
-window.gm_authFailure = () => {
-    showFallback('Google Maps rejected the browser key. Check the key, its referrer restriction, and that Maps JavaScript API is enabled.');
-};
-
-function loadGoogleMaps(key) {
-    return new Promise((resolve, reject) => {
-        if (window.google && window.google.maps) return resolve();
-        window.__initPowerBankMap = () => resolve();
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=__initPowerBankMap&language=en&region=EG`;
-        script.async = true;
-        script.onerror = () => reject(new Error('Google Maps script failed to load.'));
-        document.head.appendChild(script);
-    });
 }
 
 /* ---------- wiring ---------- */
@@ -284,7 +246,7 @@ function wireControls() {
     });
 
     $('near-me').addEventListener('click', () => locateUser(true));
-    $('recenter').addEventListener('click', () => map && map.panTo(state.userPos || CAIRO_CENTER));
+    $('recenter').addEventListener('click', () => map && map.panTo(state.userPos ? [state.userPos.lat, state.userPos.lng] : [CAIRO_CENTER.lat, CAIRO_CENTER.lng]));
     $('zoom-in').addEventListener('click', () => map && map.setZoom(map.getZoom() + 1));
     $('zoom-out').addEventListener('click', () => map && map.setZoom(map.getZoom() - 1));
 
@@ -311,15 +273,36 @@ async function loadData() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     PB.updateSignInLink();
+    updateMapAccount();
     await loadData();
     updatePills();
     renderList();
     wireControls();
 
-    const key = (window.APP_CONFIG && window.APP_CONFIG.GOOGLE_MAPS_BROWSER_KEY) || '';
-    if (!key) {
-        showFallback('Add the Google Maps browser key in js/config.js (GOOGLE_MAPS_BROWSER_KEY). The station list still works without the map.');
+    initMap();
+});
+
+async function updateMapAccount() {
+    const link = $('map-account-link');
+    if (!link) return;
+    if (!PB.api.hasToken()) {
+        link.href = 'login.html';
         return;
     }
-    loadGoogleMaps(key).then(initMap).catch((err) => showFallback(err.message));
-});
+    link.href = 'profile.html';
+    $('map-account-name').textContent = 'My account';
+    $('map-account-meta').textContent = 'Loading profile…';
+    try {
+        const customer = await PB.api.customer.me();
+        $('map-account-name').textContent = customer.fullName || 'My account';
+        $('map-account-meta').textContent = customer.email || 'Profile';
+    } catch (error) {
+        if (error.status === 401) {
+            link.href = 'login.html';
+            $('map-account-name').textContent = 'Guest';
+            $('map-account-meta').textContent = 'Sign in';
+        } else {
+            $('map-account-meta').textContent = 'Open profile';
+        }
+    }
+}

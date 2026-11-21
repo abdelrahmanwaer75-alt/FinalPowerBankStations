@@ -23,8 +23,8 @@ public class RentalPricingSnapshot {
     @Column(name = "base_fee", nullable = false, precision = 10, scale = 2)
     private BigDecimal baseFee;
 
-    @Column(name = "price_per_hour", nullable = false, precision = 10, scale = 2)
-    private BigDecimal pricePerHour;
+    @Column(name = "price_per_minute", nullable = false, precision = 10, scale = 6)
+    private BigDecimal pricePerMinute;
 
     @Column(name = "daily_max_fee", precision = 10, scale = 2)
     private BigDecimal dailyMaxFee;
@@ -44,7 +44,7 @@ public class RentalPricingSnapshot {
         this.rental = rental;
         this.planName = p.getName();
         this.baseFee = p.getBaseFee();
-        this.pricePerHour = p.getPricePerHour();
+        this.pricePerMinute = p.getPricePerMinute();
         this.dailyMaxFee = p.getDailyMaxFee();
         this.freeMinutes = p.getFreeMinutes();
         this.lateFee = p.getLateFee();
@@ -52,7 +52,7 @@ public class RentalPricingSnapshot {
     }
 
     public BigDecimal getBaseFee() { return baseFee; }
-    public BigDecimal getPricePerHour() { return pricePerHour; }
+    public BigDecimal getPricePerMinute() { return pricePerMinute; }
     public BigDecimal getDailyMaxFee() { return dailyMaxFee; }
     public int getFreeMinutes() { return freeMinutes; }
     public String getPlanName() { return planName; }

@@ -34,11 +34,13 @@ public class UserAccount {
     @Column(name = "last_login_at")
     private Instant lastLoginAt;
 
-    @Column(name = "language_preference", length = 2)
-    private String languagePreference;
+    // Defaults match the database defaults. They must be set here, because Hibernate writes NULL
+    // explicitly for unset fields and the database rejects NULL in these columns.
+    @Column(name = "language_preference", nullable = false, length = 2)
+    private String languagePreference = "EN";
 
-    @Column(name = "theme_preference", length = 5)
-    private String themePreference;
+    @Column(name = "theme_preference", nullable = false, length = 5)
+    private String themePreference = "LIGHT";
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private Instant createdAt;

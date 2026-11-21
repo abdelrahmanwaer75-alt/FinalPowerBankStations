@@ -116,8 +116,8 @@ CREATE TABLE powerbanks (
 
 -- ---------------------------------------------------------------------
 -- 8. reservations
--- Generated keys enforce "one open reservation per PowerBank" and
--- "one open reservation per customer" at the database level.
+-- Generated key enforces one open reservation per PowerBank. A customer may
+-- hold or rent multiple PowerBanks at the same time.
 -- ---------------------------------------------------------------------
 CREATE TABLE reservations (
     id                   BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -132,14 +132,10 @@ CREATE TABLE reservations (
     open_powerbank_key   BIGINT UNSIGNED AS (
                            CASE WHEN status IN ('PENDING','CONFIRMED','ACTIVE') THEN powerbank_id END
                          ) STORED,
-    open_user_key        BIGINT UNSIGNED AS (
-                           CASE WHEN status IN ('PENDING','CONFIRMED','ACTIVE') THEN user_id END
-                         ) STORED,
     created_at           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT uq_reservations_reference UNIQUE (reference),
     CONSTRAINT uq_reservations_open_powerbank UNIQUE (open_powerbank_key),
-    CONSTRAINT uq_reservations_open_user UNIQUE (open_user_key),
     CONSTRAINT fk_res_user      FOREIGN KEY (user_id)      REFERENCES users(id),
     CONSTRAINT fk_res_station   FOREIGN KEY (station_id)   REFERENCES stations(id),
     CONSTRAINT fk_res_powerbank FOREIGN KEY (powerbank_id) REFERENCES powerbanks(id),
@@ -172,7 +168,7 @@ CREATE TABLE pricing_plans (
     id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name            VARCHAR(100) NOT NULL,
     base_fee        DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    price_per_hour  DECIMAL(10,2) NOT NULL,
+    price_per_minute DECIMAL(10,6) NOT NULL,
     daily_max_fee   DECIMAL(10,2) NULL,
     free_minutes    INT UNSIGNED  NOT NULL DEFAULT 0,
     late_fee        DECIMAL(10,2) NOT NULL DEFAULT 0.00,
@@ -183,8 +179,8 @@ CREATE TABLE pricing_plans (
     created_at      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT ck_pricing_base     CHECK (base_fee >= 0),
-    CONSTRAINT ck_pricing_hour     CHECK (price_per_hour >= 0),
-    CONSTRAINT ck_pricing_daily    CHECK (daily_max_fee IS NULL OR daily_max_fee >= price_per_hour),
+    CONSTRAINT ck_pricing_minute   CHECK (price_per_minute >= 0),
+    CONSTRAINT ck_pricing_daily    CHECK (daily_max_fee IS NULL OR daily_max_fee >= price_per_minute),
     CONSTRAINT ck_pricing_late     CHECK (late_fee >= 0),
     CONSTRAINT ck_pricing_reserve  CHECK (reservation_fee >= 0),
     CONSTRAINT fk_pricing_creator  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
@@ -210,14 +206,10 @@ CREATE TABLE rentals (
     active_powerbank_key BIGINT UNSIGNED AS (
                            CASE WHEN status = 'ACTIVE' THEN powerbank_id END
                          ) STORED,
-    active_user_key     BIGINT UNSIGNED AS (
-                           CASE WHEN status = 'ACTIVE' THEN user_id END
-                         ) STORED,
     created_at          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT uq_rentals_reference UNIQUE (reference),
     CONSTRAINT uq_rentals_active_powerbank UNIQUE (active_powerbank_key),
-    CONSTRAINT uq_rentals_active_user UNIQUE (active_user_key),
     CONSTRAINT uq_rentals_reservation UNIQUE (reservation_id),
     CONSTRAINT fk_rentals_user        FOREIGN KEY (user_id)           REFERENCES users(id),
     CONSTRAINT fk_rentals_powerbank   FOREIGN KEY (powerbank_id)      REFERENCES powerbanks(id),
@@ -239,7 +231,7 @@ CREATE TABLE rental_pricing_snapshots (
     rental_id       BIGINT UNSIGNED NOT NULL,
     plan_name       VARCHAR(100)  NOT NULL,
     base_fee        DECIMAL(10,2) NOT NULL,
-    price_per_hour  DECIMAL(10,2) NOT NULL,
+    price_per_minute DECIMAL(10,6) NOT NULL,
     daily_max_fee   DECIMAL(10,2) NULL,
     free_minutes    INT UNSIGNED  NOT NULL,
     late_fee        DECIMAL(10,2) NOT NULL,

@@ -70,11 +70,13 @@ function render(s, a) {
     reserve.textContent = !open ? 'Station closed' : hasUnits ? 'Reserve a PowerBank' : 'No units available';
 
     const directions = document.getElementById('directions');
-    directions.href = `https://www.google.com/maps/dir/?api=1&destination=${s.latitude},${s.longitude}`;
+    directions.href = `https://www.openstreetmap.org/?mlat=${encodeURIComponent(s.latitude)}&mlon=${encodeURIComponent(s.longitude)}#map=17/${encodeURIComponent(s.latitude)}/${encodeURIComponent(s.longitude)}`;
+    directions.textContent = 'Open in OpenStreetMap';
+    document.getElementById('route-link').href = `route.html?station=${encodeURIComponent(s.id)}`;
 
     if (plan) {
-        setText('rate-hour', PB.money(plan.pricePerHour));
-        setText('rate-unit', `per ${plan.freeMinutes ? 'hour, after ' + plan.freeMinutes + ' free minutes' : 'hour'}`);
+        setText('rate-hour', PB.rateMoney(plan.pricePerMinute));
+        setText('rate-unit', `per minute${plan.freeMinutes ? ', after ' + plan.freeMinutes + ' free minutes' : ''}`);
         setText('rate-daily', plan.dailyMaxFee != null ? PB.money(plan.dailyMaxFee) : '—');
         setText('rate-free', plan.freeMinutes ? `${plan.freeMinutes} minutes free` : '');
         setText('rate-reserve', PB.money(plan.reservationFee));
@@ -87,24 +89,27 @@ function render(s, a) {
 }
 
 function loadMap(s) {
-    const key = (window.APP_CONFIG && window.APP_CONFIG.GOOGLE_MAPS_BROWSER_KEY) || '';
     const box = document.getElementById('map');
-    if (!key) {
-        setText('map-note', 'Add the Google Maps browser key in js/config.js to show the map.');
+    if (!window.L) {
+        setText('map-note', 'Leaflet could not be loaded. Check your internet connection and reload the page.');
         return;
     }
-    const init = () => {
-        const center = { lat: Number(s.latitude), lng: Number(s.longitude) };
-        const map = new google.maps.Map(box, { center, zoom: 16, disableDefaultUI: true });
-        new google.maps.Marker({ position: center, map, title: s.name });
-    };
-    if (window.google && window.google.maps) return init();
-    window.__initDetailsMap = init;
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=__initDetailsMap&region=EG`;
-    script.onerror = () => setText('map-note', 'Google Maps could not be loaded.');
-    document.head.appendChild(script);
+    const lat = Number(s.latitude);
+    const lng = Number(s.longitude);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        setText('map-note', 'This station does not have valid map coordinates.');
+        return;
+    }
+    const map = L.map(box, { scrollWheelZoom: false }).setView([lat, lng], 16);
+    const note = document.getElementById('map-note');
+    if (note) note.hidden = true;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    L.marker([lat, lng]).addTo(map).bindPopup(PB.esc(s.name)).openPopup();
+    setText('map-note', 'Map data © OpenStreetMap contributors.');
+    setTimeout(() => map.invalidateSize(), 0);
 }
 
 function setText(id, value) {

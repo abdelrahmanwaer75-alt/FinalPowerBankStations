@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Review PowerBank return records.">
+    <title>Returns review | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/admin-shell.css">
+</head>
+
+<body class="admin-page">
+    <div class="admin-layout">
+        <aside class="admin-sidebar"><a class="admin-brand" href="admin-dashboard.html"><span
+                    class="bolt">⚡</span><span>PowerBank Stations<small>NETWORK OS</small></span></a>
+            <nav><a href="admin-dashboard.html">Dashboard</a><span class="nav-group">Operations</span><a
+                    href="admin.html">Stations</a><a href="admin-inventory.html">Inventory</a><span
+                    class="nav-group">Bookings</span><a class="active" href="admin-returns.html">Returns</a><span
+                    class="nav-group">Business</span><a href="admin-pricing.html">Pricing</a><a href="admin-users.html">Users & access</a><a href="admin-maintenance.html">Maintenance</a><a href="admin-audit.html">Audit log</a><a href="admin-reports.html">Reports</a><a href="admin-settings.html">Settings</a></nav>
+        </aside>
+        <div class="admin-main">
+            <header class="admin-topbar"><span class="admin-kicker">Returns workflow</span><span class="admin-user">Staff console</span></header>
+            <main class="admin-content">
+                <div id="admin-banner" class="admin-banner" hidden></div>
+                <section class="admin-title">
+                    <div><span class="admin-kicker">Returns verification</span>
+                        <h1>Manual return review</h1>
+                        <p>Decisions update the PowerBank state through the server workflow.</p>
+                    </div><select id="status" class="admin-action secondary" aria-label="Return status">
+                        <option value="PENDING_REVIEW">Pending review</option>
+                        <option value="MANUAL_REVIEW">Manual review</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="REJECTED">Rejected</option>
+                    </select>
+                </section>
+                <section class="admin-card">
+                    <h2 id="queue-title">Return queue</h2>
+                    <p>Review photos through the protected staff workflow. The action buttons call the live server
+                        endpoints.</p>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Return</th>
+                                <th>PowerBank</th>
+                                <th>Station</th>
+                                <th>Photos</th>
+                                <th>Duration / cost</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="returns">
+                            <tr>
+                                <td colspan="6">Loading returns…</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/admin-shell.js"></script>
+    <script src="../../js/admin-returns.js"></script>
+</body>
+
+</html>

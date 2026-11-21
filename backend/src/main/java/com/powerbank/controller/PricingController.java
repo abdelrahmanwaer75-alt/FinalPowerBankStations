@@ -25,7 +25,7 @@ public class PricingController {
         PricingPlan p = plans.findFirstByActiveTrueOrderByIdDesc()
                 .orElseThrow(() -> new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "NO_PRICING_PLAN",
                         "No pricing plan is active"));
-        return new PricingResponse(p.getName(), p.getBaseFee(), p.getPricePerHour(), p.getDailyMaxFee(),
-                p.getFreeMinutes(), p.getLateFee(), p.getReservationFee());
+        return new PricingResponse(p.getId(), p.getName(), p.getBaseFee(), p.getPricePerMinute(), p.getDailyMaxFee(),
+                p.getFreeMinutes(), p.getLateFee(), p.getReservationFee(), p.isActive());
     }
 }

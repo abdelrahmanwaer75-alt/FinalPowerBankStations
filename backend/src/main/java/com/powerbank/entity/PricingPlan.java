@@ -18,8 +18,8 @@ public class PricingPlan {
     @Column(name = "base_fee", nullable = false, precision = 10, scale = 2)
     private BigDecimal baseFee;
 
-    @Column(name = "price_per_hour", nullable = false, precision = 10, scale = 2)
-    private BigDecimal pricePerHour;
+    @Column(name = "price_per_minute", nullable = false, precision = 10, scale = 6)
+    private BigDecimal pricePerMinute;
 
     @Column(name = "daily_max_fee", precision = 10, scale = 2)
     private BigDecimal dailyMaxFee;
@@ -38,12 +38,12 @@ public class PricingPlan {
 
     protected PricingPlan() {}
 
-    public PricingPlan(String name, java.math.BigDecimal baseFee, java.math.BigDecimal pricePerHour,
+    public PricingPlan(String name, java.math.BigDecimal baseFee, java.math.BigDecimal pricePerMinute,
                        java.math.BigDecimal dailyMaxFee, int freeMinutes, java.math.BigDecimal lateFee,
                        java.math.BigDecimal reservationFee) {
         this.name = name;
         this.baseFee = baseFee;
-        this.pricePerHour = pricePerHour;
+        this.pricePerMinute = pricePerMinute;
         this.dailyMaxFee = dailyMaxFee;
         this.freeMinutes = freeMinutes;
         this.lateFee = lateFee;
@@ -55,7 +55,7 @@ public class PricingPlan {
     public Integer getId() { return id; }
     public String getName() { return name; }
     public BigDecimal getBaseFee() { return baseFee; }
-    public BigDecimal getPricePerHour() { return pricePerHour; }
+    public BigDecimal getPricePerMinute() { return pricePerMinute; }
     public BigDecimal getDailyMaxFee() { return dailyMaxFee; }
     public int getFreeMinutes() { return freeMinutes; }
     public BigDecimal getLateFee() { return lateFee; }

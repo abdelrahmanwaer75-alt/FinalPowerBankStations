@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function render() {
     show('content');
     show('head');
+    document.documentElement.dataset.theme = String(profile.themePreference || 'LIGHT').toLowerCase();
     document.getElementById('full-name').value = profile.fullName || '';
     document.getElementById('email').value = profile.email || '';
     document.getElementById('phone').value = profile.phone || '';
@@ -43,6 +44,7 @@ function render() {
     setText('avatar', initials(profile.fullName));
     markSeg('[data-lang]', 'lang', profile.languagePreference);
     markSeg('[data-theme]', 'theme', profile.themePreference);
+    try { localStorage.setItem('pb_theme', document.documentElement.dataset.theme); } catch (_) { /* Preference remains on the account. */ }
 }
 
 async function saveProfile(event) {
@@ -96,7 +98,9 @@ async function changePassword(event) {
     const confirm = document.getElementById('confirm-password').value;
 
     if (!current) return setError(err, 'Enter your current password.');
-    if (next.length < 8) return setError(err, 'The new password needs at least 8 characters.');
+    if (next.length < 8 || next.length > 72 || !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])/.test(next)) {
+        return setError(err, 'Use 8 to 72 characters with upper and lower case letters, a number, and a special character.');
+    }
     if (next !== confirm) return setError(err, 'The new passwords do not match.');
 
     try {

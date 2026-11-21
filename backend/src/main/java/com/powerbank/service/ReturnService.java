@@ -66,7 +66,7 @@ public class ReturnService {
 
         Instant now = Instant.now();
         long minutes = RentalService.minutesBetween(rental.getStartTime(), now);
-        BigDecimal cost = PricingCalculator.cost(snap.getBaseFee(), snap.getPricePerHour(),
+        BigDecimal cost = PricingCalculator.cost(snap.getBaseFee(), snap.getPricePerMinute(),
                 snap.getDailyMaxFee(), snap.getFreeMinutes(), minutes);
 
         rental.complete(now, (int) minutes, cost);

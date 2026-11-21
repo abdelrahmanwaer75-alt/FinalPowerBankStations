@@ -1,0 +1,226 @@
+/* Rental history uses the same header, spacing, cards, and palette as Active Rental. */
+.history-page .history-intro,
+.history-page .history-table-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.history-page .history-intro h1 {
+    margin: 5px 0 6px;
+    font-size: clamp(26px, 4vw, 34px);
+    letter-spacing: -.8px;
+}
+
+.history-page .history-intro .muted-lg,
+.history-page .history-table-heading .muted {
+    margin: 0;
+}
+
+.history-page .history-intro .btn-primary,
+.history-page .history-table-heading .btn-secondary {
+    flex: 0 0 auto;
+}
+
+.history-page .history-hold-card {
+    margin-bottom: 0;
+}
+
+.history-page .history-hold-card h2 {
+    margin: 12px 0 6px;
+    font-size: 22px;
+}
+
+.history-page .history-hold-card .muted {
+    margin-bottom: 16px;
+}
+
+.history-page .history-hold-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.history-page .history-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.history-page .metric-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 20px;
+}
+
+.history-page .history-metric-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 4px;
+    border-radius: 11px;
+    background: var(--color-chip-blue);
+    color: var(--color-primary-strong);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.history-page .history-metric-icon--green {
+    background: var(--color-mint);
+    color: var(--color-green);
+}
+
+.history-page .metric-card strong {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(22px, 2.5vw, 28px);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.history-page .metric-card small {
+    color: var(--color-muted);
+    font-size: 12px;
+}
+
+.history-page .history-table-card {
+    padding: 24px;
+}
+
+.history-page .table-card {
+    color: var(--color-ink);
+    background: var(--color-surface);
+    border: 1px solid var(--color-surface-high);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+}
+
+.history-page .history-table-heading {
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.history-page .history-table-heading h2 {
+    margin: 4px 0 6px;
+    font-size: 20px;
+}
+
+.history-page .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--color-surface-high);
+    border-radius: 10px;
+}
+
+.history-page table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    background: var(--color-surface);
+}
+
+.history-page th,
+.history-page td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--color-surface-high);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.history-page th {
+    background: var(--color-surface-low);
+    color: var(--color-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .35px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.history-page td {
+    color: var(--color-ink);
+    font-size: 13px;
+}
+
+.history-page tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.history-page tbody tr:hover {
+    background: var(--color-surface-low);
+}
+
+.history-page .history-row-action {
+    margin-top: 8px;
+}
+
+.history-page .history-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.history-page .history-badge--active {
+    background: var(--color-chip-blue);
+    color: var(--color-primary-strong);
+}
+
+.history-page .history-badge--complete {
+    background: var(--color-mint);
+    color: var(--color-green);
+}
+
+.history-page .empty-state {
+    padding: 28px 20px;
+    border: 1px dashed var(--color-surface-high);
+    border-radius: 10px;
+    background: var(--color-surface-low);
+    color: var(--color-muted);
+    text-align: center;
+}
+
+.history-page .demo-note {
+    margin: -8px 0 0;
+}
+
+@media (max-width: 900px) {
+    .history-page .history-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .history-page .details-main {
+        padding-inline: 16px;
+    }
+
+    .history-page .history-intro,
+    .history-page .history-table-card {
+        padding: 18px;
+    }
+
+    .history-page .history-intro .btn-primary,
+    .history-page .history-table-heading .btn-secondary,
+    .history-page .history-hold-actions > * {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .history-page .history-table-heading {
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 400px) {
+    .history-page .history-metrics {
+        grid-template-columns: 1fr;
+    }
+}

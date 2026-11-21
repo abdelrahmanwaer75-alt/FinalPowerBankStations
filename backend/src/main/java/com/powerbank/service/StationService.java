@@ -34,9 +34,11 @@ public class StationService {
     /** Active stations. Availability comes from one grouped query, not one query per station. */
     public List<StationResponse> listActive() {
         Map<Long, Long> available = availableByStation();
-        return stations.findByStatusOrderByNameAsc(StationStatus.ACTIVE).stream()
+        List<StationResponse> list = stations.findByStatusOrderByNameAsc(StationStatus.ACTIVE).stream()
                 .map(s -> toResponse(s, available.getOrDefault(s.getId(), 0L)))
                 .toList();
+        // Most available units first, using the course's sorting code (see com.powerbank.ds.StationRanking).
+        return com.powerbank.ds.StationRanking.byAvailability(list);
     }
 
     public List<StationResponse> nearby(double lat, double lng, double radiusKm) {

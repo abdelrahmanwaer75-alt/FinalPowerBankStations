@@ -6,7 +6,7 @@ const returnId = Number(new URLSearchParams(location.search).get('return'));
 
 document.addEventListener('DOMContentLoaded', async () => {
     PB.updateSignInLink();
-    if (!PB.requireLogin()) return;
+    if (!PB.requireLogin({ inPlace: true, title: 'Sign in to view your receipt', message: 'Sign in to view the return receipt associated with your account.' })) return;
     if (!returnId) return show('empty');
 
     try {
@@ -35,7 +35,7 @@ function render(ret, rental) {
     setText('returned-at', end);
     setText('duration', hours ? `${hours}h ${rest}m` : `${rest}m`);
     setText('duration-range', `${start} → ${end}`);
-    setText('rate', PB.money(rental.pricePerHour));
+    setText('rate', PB.rateMoney(rental.pricePerMinute));
     setText('total', PB.money(ret.finalCost));
     setText('unit', rental.powerBankSerial);
     setText('pickup', rental.pickupStationName);

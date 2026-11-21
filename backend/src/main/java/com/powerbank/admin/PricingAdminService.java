@@ -28,11 +28,11 @@ public class PricingAdminService {
     }
 
     public PricingResponse create(PricingUpsertRequest req) {
-        if (req.dailyMaxFee() != null && req.dailyMaxFee().compareTo(req.pricePerHour()) < 0) {
+        if (req.dailyMaxFee() != null && req.dailyMaxFee().compareTo(req.pricePerMinute()) < 0) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_PRICING",
-                    "The daily maximum cannot be lower than the price per hour");
+                    "The daily maximum cannot be lower than the price per minute");
         }
-        PricingPlan plan = new PricingPlan(req.name().trim(), req.baseFee(), req.pricePerHour(),
+        PricingPlan plan = new PricingPlan(req.name().trim(), req.baseFee(), req.pricePerMinute(),
                 req.dailyMaxFee(), req.freeMinutes(), req.lateFee(), req.reservationFee());
         plans.save(plan);
         return toResponse(plan);
@@ -49,7 +49,7 @@ public class PricingAdminService {
     }
 
     private PricingResponse toResponse(PricingPlan p) {
-        return new PricingResponse(p.getName(), p.getBaseFee(), p.getPricePerHour(), p.getDailyMaxFee(),
-                p.getFreeMinutes(), p.getLateFee(), p.getReservationFee());
+        return new PricingResponse(p.getId(), p.getName(), p.getBaseFee(), p.getPricePerMinute(), p.getDailyMaxFee(),
+                p.getFreeMinutes(), p.getLateFee(), p.getReservationFee(), p.isActive());
     }
 }

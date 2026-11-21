@@ -9,8 +9,16 @@ PB.api = (function () {
     const base = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 'http://localhost:8080/api';
 
     // Remembered sign-in lives in localStorage; otherwise the token lasts for this browser session only.
-    const token = () => localStorage.getItem('pb_token') || sessionStorage.getItem('pb_token');
-    const clearToken = () => { localStorage.removeItem('pb_token'); sessionStorage.removeItem('pb_token'); };
+    const token = () => {
+        try { return localStorage.getItem('pb_token') || sessionStorage.getItem('pb_token'); }
+        catch (_) {
+            try { return sessionStorage.getItem('pb_token'); } catch (_) { return null; }
+        }
+    };
+    const clearToken = () => {
+        try { localStorage.removeItem('pb_token'); } catch (_) { /* Storage may be disabled. */ }
+        try { sessionStorage.removeItem('pb_token'); } catch (_) { /* Storage may be disabled. */ }
+    };
 
     async function request(method, path, body) {
         const headers = { Accept: 'application/json' };
@@ -75,13 +83,23 @@ PB.api = (function () {
         setToken(value, remember) {
             clearToken();
             if (!value) return;
-            (remember ? localStorage : sessionStorage).setItem('pb_token', value);
+            try { (remember ? localStorage : sessionStorage).setItem('pb_token', value); }
+            catch (_) {
+                if (remember) {
+                    try { sessionStorage.setItem('pb_token', value); return; } catch (_) { /* Fall through. */ }
+                }
+                throw new Error('Browser storage is unavailable. Enable site storage to stay signed in.');
+            }
         },
         hasToken: () => !!token(),
 
         auth: {
             register: (payload) => request('POST', '/auth/register', payload),
+            verify: (payload) => request('POST', '/auth/verify', payload),
+            resendVerification: (identifier) => request('POST', '/auth/resend-verification', { identifier }),
             login: (payload) => request('POST', '/auth/login', payload),
+            forgotPassword: (identifier) => request('POST', '/auth/forgot-password', { identifier }),
+            resetPassword: (payload) => request('POST', '/auth/reset-password', payload),
             logout: () => request('POST', '/auth/logout')
         },
         customer: {
@@ -119,7 +137,10 @@ PB.api = (function () {
             stations: () => request('GET', '/admin/stations'),
             createStation: (body) => request('POST', '/admin/stations', body),
             updateStation: (id, body) => request('PUT', `/admin/stations/${id}`, body),
-            addPowerBanks: (id, count) => request('POST', `/admin/stations/${id}/powerbanks`, { count })
+            addPowerBanks: (id, count) => request('POST', `/admin/stations/${id}/powerbanks`, { count }),
+            pricing: () => request('GET', '/admin/pricing'),
+            createPricing: (body) => request('POST', '/admin/pricing', body),
+            activatePricing: (id) => request('POST', `/admin/pricing/${id}/activate`)
         },
         returns: {
             create: (rentalId, returnStationId) => request('POST', '/returns', { rentalId, returnStationId }),

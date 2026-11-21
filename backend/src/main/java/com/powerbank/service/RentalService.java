@@ -48,10 +48,6 @@ public class RentalService {
         if (r.getStatus() != ReservationStatus.PENDING) {
             throw conflict("RESERVATION_NOT_ACTIVE", "This reservation can no longer be started");
         }
-        if (rentals.existsByUserIdAndStatus(userId, RentalStatus.ACTIVE)) {
-            throw conflict("ACTIVE_RENTAL_EXISTS", "You already have an active rental");
-        }
-
         PricingPlan plan = plans.findFirstByActiveTrueOrderByIdDesc()
                 .orElseThrow(() -> new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "NO_PRICING_PLAN",
                         "No pricing plan is active. Ask an administrator."));
@@ -104,13 +100,13 @@ public class RentalService {
 
         BigDecimal cost = finished
                 ? r.getFinalCost()
-                : PricingCalculator.cost(snap.getBaseFee(), snap.getPricePerHour(),
+                : PricingCalculator.cost(snap.getBaseFee(), snap.getPricePerMinute(),
                         snap.getDailyMaxFee(), snap.getFreeMinutes(), minutes);
 
         return new RentalResponse(
                 r.getId(), r.getReference(), r.getStatus().name(),
                 r.getPickupStation().getName(), r.getPowerBank().getSerialNumber(),
-                snap.getPlanName(), snap.getPricePerHour(),
+                snap.getPlanName(), snap.getPricePerMinute(),
                 r.getStartTime(), r.getEndTime(), minutes, cost, finished);
     }
 

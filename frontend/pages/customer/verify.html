@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Verify your PowerBank Stations account.">
+  <title>Verify account | PowerBank Stations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="../../css/tokens.css">
+  <link rel="stylesheet" href="../../css/auth.css">
+  <link rel="stylesheet" href="../../css/auth-flow.css">
+</head>
+
+<body class="auth-page">
+  <header class="auth-header"><a class="auth-brand" href="index.html"><span class="bolt">⚡</span> PowerBank Stations</a>
+    <nav><a href="login.html">Sign in</a></nav>
+  </header>
+  <main class="auth-main">
+    <section class="auth-card flow-card" aria-labelledby="verify-title">
+      <div class="auth-telemetry"><span class="auth-chip"><span class="dot"></span> Secure verification</span><span
+          class="auth-code">EG-NODE // 094</span></div>
+      <div class="auth-head">
+        <div class="auth-icon" aria-hidden="true">✓</div>
+        <h1 id="verify-title">Verify your account</h1>
+        <p>Enter the six-digit code sent to:</p>
+        <p class="verify-destination" id="verify-destination" aria-live="polite">Loading destination…</p>
+      </div>
+      <form id="verify-form" class="flow-form" novalidate>
+        <input id="identifier" type="hidden" autocomplete="username">
+        <div><span class="field">Verification code</span>
+          <div class="code-row" id="code-row" aria-label="Six-digit verification code"></div>
+        </div>
+        <p id="verify-message" class="form-message" role="status" aria-live="polite"></p>
+        <button id="verify-submit" class="btn-primary-auth" type="submit">Verify account</button>
+        <div class="flow-actions"><button id="resend" class="flow-link" type="button" disabled>Resend code in 60s</button><a class="flow-link"
+            href="register.html">Back to registration</a></div>
+      </form>
+      <div class="auth-trust"><span>Simulated delivery</span><span class="sep">•</span><span>Codes expire after 10
+          minutes</span></div>
+    </section>
+  </main>
+  <footer class="auth-footer"><span>© 2025 PowerBank Stations Network.</span><span><a href="index.html">Home</a></span>
+  </footer>
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script src="../../js/common.js"></script>
+  <script src="../../js/auth-flow.js"></script>
+</body>
+
+</html>

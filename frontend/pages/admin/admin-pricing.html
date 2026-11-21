@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage active PowerBank rental pricing plans.">
+    <title>Pricing plans | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/admin-shell.css">
+</head>
+
+<body class="admin-page">
+    <div class="admin-layout">
+        <aside class="admin-sidebar"><a class="admin-brand" href="admin-dashboard.html"><span
+                    class="bolt">⚡</span><span>PowerBank Stations<small>NETWORK OS</small></span></a>
+            <nav><a href="admin-dashboard.html">Dashboard</a><span class="nav-group">Operations</span><a
+                    href="admin.html">Stations</a><a href="admin-inventory.html">Inventory</a><span
+                    class="nav-group">Bookings</span><a href="admin-returns.html">Returns</a><span
+                    class="nav-group">Business</span><a class="active" href="admin-pricing.html">Pricing</a><a href="admin-users.html">Users & access</a><a href="admin-maintenance.html">Maintenance</a><a href="admin-audit.html">Audit log</a><a href="admin-reports.html">Reports</a><a href="admin-settings.html">Settings</a></nav>
+        </aside>
+        <div class="admin-main">
+            <header class="admin-topbar"><span class="admin-kicker">Business configuration</span><span
+                    class="admin-user">Staff console</span></header>
+            <main class="admin-content">
+                <div id="admin-banner" class="admin-banner" hidden></div>
+                <section class="admin-title">
+                    <div><span class="admin-kicker">Pricing & policies</span>
+                        <h1>Rental pricing plans</h1>
+                        <p>Activating a plan affects new rentals; existing rentals keep their pricing snapshot.</p>
+                    </div><button id="show-form" class="admin-action" type="button">Create pricing plan</button>
+                </section>
+                <section class="admin-grid">
+                    <article class="admin-card">
+                        <h2>Saved plans</h2>
+                        <p id="plan-count">Loading plans…</p>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Plan</th>
+                                    <th>Base fee</th>
+                                    <th>Per minute</th>
+                                    <th>Daily cap</th>
+                                    <th>Free period</th>
+                                    <th>State</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="plans">
+                                <tr>
+                                    <td colspan="7">Loading plans…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </article>
+                    <aside class="admin-card" id="form-card" hidden>
+                        <h2>Create a plan</h2>
+                        <p>Set the charges and grace period for future rentals.</p>
+                        <form id="pricing-form" class="admin-form"><label>Plan name<input id="plan-name" maxlength="100"
+                                    required></label>
+                            <div class="form-row"><label>Base fee (EGP)<input id="base-fee" type="number" min="0"
+                                        step="0.01" value="0" required></label><label>Price per minute (EGP)<input
+                                        id="minute-rate" type="number" min="0" step="0.000001" required></label></div>
+                            <label>Daily maximum (EGP, optional)<input id="daily-max" type="number" min="0"
+                                    step="0.01"></label>
+                            <div class="form-row"><label>Free minutes<input id="free-minutes" type="number" min="0"
+                                        max="1440" value="0" required></label><label>Late fee (EGP)<input id="late-fee"
+                                        type="number" min="0" step="0.01" value="0" required></label></div>
+                            <label>Reservation fee (EGP)<input id="reservation-fee" type="number" min="0" step="0.01"
+                                    value="0" required></label><button class="admin-action" type="submit">Save
+                                plan</button><button id="cancel-form" class="admin-action secondary"
+                                type="button">Cancel</button>
+                        </form>
+                    </aside>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/admin-shell.js"></script>
+    <script src="../../js/admin-pricing.js"></script>
+</body>
+
+</html>

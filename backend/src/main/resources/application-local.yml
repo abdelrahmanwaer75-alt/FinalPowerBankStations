@@ -1,8 +1,9 @@
 spring:
   datasource:
-    username: root
-    password:752006aA@
+    url: jdbc:mysql://localhost:3306/powerbank_stations?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
 
 app:
   jwt:
-    secret: AbdelrahmanMohamedAhmedElsayedWaer_abcXYZ123secretKey2026_dev_only
+    secret: ${JWT_SECRET:local-dev-secret-change-before-deploy-2026}

@@ -5,11 +5,13 @@
 
 const CIRCLE = 2 * Math.PI * 80;
 let hold = null;
+let activeHolds = [];
+let pricingPlan = null;
 let timer = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     PB.updateSignInLink();
-    if (!PB.requireLogin()) return;
+    if (!PB.requireLogin({ inPlace: true, title: 'Sign in to manage your reservation', message: 'Sign in to confirm or cancel your PowerBank reservation.' })) return;
 
     document.getElementById('confirm-btn').addEventListener('click', confirmHold);
     document.getElementById('cancel-btn').addEventListener('click', cancelHold);
@@ -23,13 +25,34 @@ document.addEventListener('DOMContentLoaded', async () => {
             show('empty');
             return;
         }
-        hold = holds[0];
+        activeHolds = holds;
+        pricingPlan = pricing;
+        hold = activeHolds[0];
+        renderHoldPicker();
         render(hold, pricing);
     } catch (err) {
         showBanner(err.message);
         show('empty');
     }
 });
+
+function renderHoldPicker() {
+    const wrap = document.getElementById('reservation-picker-wrap');
+    const picker = document.getElementById('reservation-picker');
+    // Older cached HTML may not contain the optional multi-hold picker yet.
+    if (!wrap || !picker || activeHolds.length < 2) {
+        if (wrap) wrap.hidden = true;
+        return;
+    }
+    wrap.hidden = false;
+    picker.innerHTML = activeHolds.map((item) =>
+        `<option value="${item.id}" ${item.id === hold.id ? 'selected' : ''}>${PB.esc(item.powerBankSerial)} · ${PB.esc(item.stationName)}</option>`
+    ).join('');
+    picker.onchange = () => {
+        hold = activeHolds.find((item) => String(item.id) === picker.value);
+        render(hold, pricingPlan);
+    };
+}
 
 function render(h, p) {
     document.getElementById('subtitle').innerHTML =
@@ -42,7 +65,7 @@ function render(h, p) {
     setText('hold-minutes', h.durationMinutes);
 
     if (p) {
-        setText('rate-hour', PB.money(p.pricePerHour) + ' / hr');
+        setText('rate-hour', PB.rateMoney(p.pricePerMinute) + ' / min');
         setText('free-period', p.freeMinutes ? `First ${p.freeMinutes} min` : 'None');
         setText('rate-daily', p.dailyMaxFee != null ? PB.money(p.dailyMaxFee) : '—');
         setText('rate-reserve', PB.money(p.reservationFee));
@@ -99,7 +122,10 @@ async function cancelHold() {
 }
 
 function show(id) {
-    ['content', 'empty'].forEach((x) => { document.getElementById(x).hidden = x !== id; });
+    ['content', 'empty'].forEach((x) => {
+        const element = document.getElementById(x);
+        if (element) element.hidden = x !== id;
+    });
 }
 
 function setText(id, value) {
@@ -109,6 +135,7 @@ function setText(id, value) {
 
 function showBanner(message) {
     const el = document.getElementById('banner');
+    if (!el) { PB.toast(message, true); return; }
     el.textContent = message;
     el.hidden = false;
 }

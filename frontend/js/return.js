@@ -10,7 +10,7 @@ let selected = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     PB.updateSignInLink();
-    if (!PB.requireLogin()) return;
+    if (!PB.requireLogin({ inPlace: true, title: 'Sign in to return your PowerBank', message: 'Sign in to choose a return station and complete your return.' })) return;
 
     document.getElementById('confirm').addEventListener('click', confirmReturn);
 
@@ -32,7 +32,7 @@ function render() {
     setText('unit', rental.powerBankSerial);
     setText('ref', rental.reference);
     setText('started', PB.dateTime(rental.startTime));
-    setText('rate', `${PB.money(rental.pricePerHour)} / hr`);
+    setText('rate', `${PB.rateMoney(rental.pricePerMinute)} / min`);
     setText('total', PB.money(rental.cost));
     updateDuration();
     setInterval(updateDuration, 1000);
@@ -79,7 +79,7 @@ async function confirmReturn() {
     try {
         const ret = await PB.api.returns.create(rental.id, selected.id);
         PB.toast(`Returned. Total ${PB.money(ret.finalCost)}. Add photos to finish.`);
-        location.href = 'rentals.html?return=' + ret.id;
+        location.href = 'return-photos.html?return=' + ret.id;
     } catch (err) {
         PB.toast(err.message, true);
         btn.disabled = false;

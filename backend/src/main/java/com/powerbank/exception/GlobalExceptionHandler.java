@@ -27,7 +27,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<Map<String, Object>> handleConflict(DataIntegrityViolationException ex) {
-        return body(HttpStatus.CONFLICT, "CONFLICT", "This record already exists or breaks a data rule", null);
+        // The exact database message goes to the server console so the real cause is visible.
+        String cause = ex.getMostSpecificCause().getMessage();
+        System.err.println("[DATA INTEGRITY] " + cause);
+        String detail = cause == null ? "" : cause.toLowerCase(java.util.Locale.ROOT);
+        if (detail.contains("uq_rentals_active_user")) {
+            return body(HttpStatus.CONFLICT, "OLD_ACTIVE_RENTAL_LIMIT",
+                    "The database still has the old one-active-rental limit. Stop the backend and apply the latest database migration, then restart it.", null);
+        }
+        if (detail.contains("uq_rentals_active_powerbank") || detail.contains("uq_reservations_open_powerbank")) {
+            return body(HttpStatus.CONFLICT, "POWERBANK_JUST_TAKEN",
+                    "This PowerBank was just reserved by someone else. Refresh the station and choose another available unit.", null);
+        }
+        if (detail.contains("uq_rentals_reservation")) {
+            return body(HttpStatus.CONFLICT, "RESERVATION_ALREADY_USED",
+                    "This reservation has already been used or is no longer active. Refresh My PowerBanks and try again.", null);
+        }
+        return body(HttpStatus.CONFLICT, "DATA_CONFLICT",
+                "This change conflicts with the current reservation or PowerBank status. Refresh the page and try again.", null);
     }
 
     @ExceptionHandler(Exception.class)

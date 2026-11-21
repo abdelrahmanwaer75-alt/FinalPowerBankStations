@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 
-/** Append-only. The database blocks UPDATE and DELETE on this table (see schema.sql). */
+/** Append-only. The database blocks UPDATE and DELETE on this table (enforced by a trigger in Supabase). */
 @Entity
 @Table(name = "audit_logs")
 public class AuditLog {
@@ -32,7 +32,7 @@ public class AuditLog {
     @Column(name = "ip_address", length = 45)
     private String ipAddress;
 
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "jsonb")
     private String details;
 
     @Column(name = "created_at", insertable = false, updatable = false)

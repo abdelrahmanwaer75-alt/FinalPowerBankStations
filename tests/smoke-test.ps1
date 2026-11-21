@@ -2,17 +2,15 @@
 #
 # Usage (backend must be running on port 8080):
 #   cd G:\project\PowerBankStations\tests
-#   .\smoke-test.ps1 -MysqlExe "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -MysqlUser root -MysqlPassword "..."
+#   .\smoke-test.ps1
 #
-# -MysqlExe is optional. Without it, the admin part is skipped (it needs a role grant in MySQL).
+# The admin part needs a staff role. The script creates an admin account, prints one SQL statement,
+# and waits for you to run it in the Supabase SQL editor. Use -SkipAdmin to skip that part.
 # Each run creates new accounts with unique emails, so it can be run again.
 
 param(
     [string]$BaseUrl = "http://localhost:8080/api",
-    [string]$MysqlExe = "",
-    [string]$MysqlUser = "root",
-    [string]$MysqlPassword = "",
-    [string]$Database = "powerbank_stations",
+    [switch]$SkipAdmin,
     [string]$PhotoPath = ""
 )
 
@@ -27,12 +25,14 @@ function Check([string]$name, [scriptblock]$test) {
         if ($ok -eq $true) {
             $script:passed++
             Write-Host "  PASS  $name" -ForegroundColor Green
-        } else {
+        }
+        else {
             $script:failed++
             $script:failures += $name
             Write-Host "  FAIL  $name" -ForegroundColor Red
         }
-    } catch {
+    }
+    catch {
         $script:failed++
         $script:failures += "$name -> $($_.Exception.Message)"
         Write-Host "  FAIL  $name : $($_.Exception.Message)" -ForegroundColor Red
@@ -55,12 +55,14 @@ function ErrorCode([scriptblock]$request) {
     try {
         & $request | Out-Null
         return $null
-    } catch {
+    }
+    catch {
         try {
             $raw = $_.ErrorDetails.Message
             if (-not $raw) { return "HTTP_ERROR" }
             return ($raw | ConvertFrom-Json).code
-        } catch {
+        }
+        catch {
             return "HTTP_ERROR"
         }
     }
@@ -82,7 +84,7 @@ Check "every station has a numeric availableCount" {
 
 Check "GET /pricing/active returns a plan" {
     $p = Api GET "/pricing/active"
-    $p.pricePerHour -gt 0
+    $p.pricePerMinute -gt 0
 }
 
 Check "GET /stations/{id}/availability works" {
@@ -186,7 +188,8 @@ if ($PhotoPath -and (Test-Path $PhotoPath)) {
         $up = Invoke-RestMethod -Method Post -Uri "$BaseUrl/returns/$($script:ret.id)/images" -Headers @{ Authorization = "Bearer $token" } -Form $form
         $up.Count -eq 1
     }
-} else {
+}
+else {
     Write-Host "  SKIP  photo upload (pass -PhotoPath to test it)" -ForegroundColor Yellow
 }
 
@@ -197,17 +200,18 @@ Check "unknown rental returns RENTAL_NOT_FOUND" {
 Write-Host ""
 Write-Host "== Admin flow ==" -ForegroundColor Cyan
 
-if (-not $MysqlExe) {
-    Write-Host "  SKIP  admin tests (pass -MysqlExe to grant a staff role)" -ForegroundColor Yellow
-} else {
+if ($SkipAdmin) {
+    Write-Host "  SKIP  admin tests (-SkipAdmin)" -ForegroundColor Yellow
+}
+else {
     $adminEmail = "admin.$stamp@example.com"
     $adminReg = Api POST "/auth/register" @{ fullName = "Smoke Admin"; email = $adminEmail; password = "Password123" }
     $adminToken = $adminReg.token
 
-    $sql = "INSERT IGNORE INTO user_roles (user_id, role_id) SELECT u.id, r.id FROM users u JOIN roles r ON r.name='SUPER_ADMIN' WHERE u.email='$adminEmail';"
-    $env:MYSQL_PWD = $MysqlPassword
-    & $MysqlExe "-u$MysqlUser" $Database -e $sql
-    Remove-Item Env:MYSQL_PWD -ErrorAction SilentlyContinue
+    Write-Host ""
+    Write-Host "  Run this in the Supabase SQL editor, then press Enter:" -ForegroundColor Yellow
+    Write-Host "  insert into public.user_roles (user_id, role_id) select u.id, r.id from public.users u join public.roles r on r.name='SUPER_ADMIN' where u.email='$adminEmail' on conflict do nothing;" -ForegroundColor Cyan
+    [void](Read-Host "Press Enter after running the SQL")
 
     Check "a customer cannot open the admin queue (NOT_AUTHORIZED)" {
         (ErrorCode { Api GET "/admin/returns" $null $token }) -eq "NOT_AUTHORIZED"
@@ -235,13 +239,6 @@ if (-not $MysqlExe) {
         } $adminToken
         $withBanks = Api POST "/admin/stations/$($s.id)/powerbanks" @{ count = 2 } $adminToken
         $withBanks.availableCount -eq 2
-    }
-
-    Check "the audit log records admin actions (checked via MySQL)" {
-        $env:MYSQL_PWD = $MysqlPassword
-        $count = & $MysqlExe "-u$MysqlUser" $Database -N -e "SELECT COUNT(*) FROM audit_logs WHERE action IN ('RETURN_APPROVED','STATION_CREATED','POWERBANKS_ADDED');"
-        Remove-Item Env:MYSQL_PWD -ErrorAction SilentlyContinue
-        [int]$count -ge 3
     }
 }
 

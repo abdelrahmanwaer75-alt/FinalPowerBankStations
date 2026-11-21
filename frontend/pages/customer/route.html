@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plan a route to a PowerBank station.">
+    <title>Route to station | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <link rel="stylesheet" href="../../css/details.css">
+    <link rel="stylesheet" href="../../css/workflow.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+</head>
+
+<body class="details-page">
+    <header class="auth-header"><a class="auth-brand" href="map.html"><span class="bolt">⚡</span> PowerBank Stations</a>
+        <nav class="app-links"><a href="map.html">Map</a><a href="dashboard.html">Dashboard</a><a
+                href="profile.html">Profile</a></nav>
+    </header>
+    <main class="details-main">
+        <div id="banner" class="data-banner" hidden></div>
+        <section class="workflow-head">
+            <div>
+                <p class="label">Route planning</p>
+                <h1>Directions to a station</h1>
+                <p id="station-name" class="muted-lg">Loading destination…</p>
+            </div><a id="open-maps" class="btn-secondary" href="map.html" target="_blank" rel="noopener">Open in OpenStreetMap</a>
+        </section>
+        <div class="workflow-grid" id="content" hidden>
+            <section class="card">
+                <div id="route-map" class="route-map">
+                    <div id="map">
+                        <div class="route-demo">Map is loading…</div>
+                    </div>
+                </div>
+            </section>
+            <aside class="card">
+                <h2>Plan your route</h2><label class="field"><span>Starting location</span><input id="origin"
+                        placeholder="Use your location or enter an address"></label><button id="use-location"
+                    class="btn-secondary" type="button">Use my location</button><label class="field"><span>Travel
+                        mode</span><select id="mode">
+                        <option value="WALKING">Walking</option>
+                        <option value="DRIVING">Driving</option>
+                    </select></label><button id="show-route" class="btn-primary" type="button">Show route</button>
+                <div class="route-summary" style="margin-top:16px">
+                    <div><span>Distance</span><strong id="distance">—</strong></div>
+                    <div><span>Estimated time</span><strong id="duration">—</strong></div>
+                </div>
+                <p id="route-note" class="muted small" style="margin-top:16px"></p>
+            </aside>
+        </div>
+        <section id="empty" class="card" hidden>
+            <h2>Station not found</h2><a class="btn-primary" href="map.html">Find a station</a>
+        </section>
+    </main>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="../../js/route.js"></script>
+</body>
+
+</html>

@@ -10,7 +10,7 @@ public record RentalResponse(
         String pickupStationName,
         String powerBankSerial,
         String planName,
-        BigDecimal pricePerHour,
+        BigDecimal pricePerMinute,
         Instant startTime,
         Instant endTime,
         long elapsedMinutes,

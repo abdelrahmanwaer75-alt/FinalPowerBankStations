@@ -3,9 +3,7 @@
 Current state. Read this before running anything.
 
 ## Verified
-- Database: `database/schema.sql` (24 tables) and `sample_data.sql` load on MariaDB 10.11.
-  The constraint tests (open-reservation uniqueness, one active rental per customer, append-only audit log,
-  maintenance target check, station delete behaviour) passed on MariaDB 10.11. Not run on MySQL 8 yet.
+- Database: MySQL 8 schema and sample data are in `database/`.
 - Frontend: all JavaScript files pass a syntax check. Every page link and script path exists.
   Every frontend API call matches a backend route (static check).
 
@@ -27,9 +25,9 @@ Current state. Read this before running anything.
   inspection records, reports, settings, Arabic (RTL), dark mode on every page.
 
 ## First run
-1. `mysql -u root -p < database/schema.sql` then `mysql -u root -p powerbank_stations < database/sample_data.sql`
-2. `cd backend && mvn spring-boot:run` (set `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`)
-3. Register an account in the app, edit the email in `database/make_admin.sql`, run it.
-4. `cd frontend && npx serve -l 3000 .` then open http://localhost:3000/map.html
+1. Start MySQL 8, then load `database/schema.sql` followed by `database/sample_data.sql`.
+2. Start the backend with `cd backend; .\run-local.ps1` and provide MySQL credentials.
+3. Register and verify `0009ardh@gmail.com`, then run `mysql -u root -p powerbank_stations < database/make_admin.sql` to grant the first `SUPER_ADMIN` role.
+4. `cd frontend && npx serve -l 3000 .` then open http://localhost:3000/pages/ for the customer site. Admin screens live under `/pages/admin/`.
 
 See `backend/README.md` and `frontend/README.md` for details.

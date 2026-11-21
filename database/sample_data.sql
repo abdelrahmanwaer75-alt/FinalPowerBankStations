@@ -2,7 +2,7 @@
 -- PowerBank Stations - sample data
 -- Run AFTER schema.sql:  mysql -u root -p powerbank_stations < database/sample_data.sql
 -- No user accounts are inserted here. Create the first Super Admin with the
--- seed command in the backend (see README), which stores a BCrypt hash.
+-- database/make_admin.sql after registering and verifying an account.
 -- =====================================================================
 USE powerbank_stations;
 
@@ -65,9 +65,9 @@ INSERT INTO system_settings (setting_key, setting_value) VALUES
 
 -- Default active pricing plan
 INSERT INTO pricing_plans
- (name, base_fee, price_per_hour, daily_max_fee, free_minutes, late_fee, reservation_fee, is_active)
+ (name, base_fee, price_per_minute, daily_max_fee, free_minutes, late_fee, reservation_fee, is_active)
 VALUES
- ('Standard', 0.00, 8.00, 40.00, 5, 10.00, 0.00, TRUE);
+ ('Standard', 0.00, 0.133333, 40.00, 5, 10.00, 0.00, TRUE);
 
 -- Sample stations (coordinates are real city locations in Egypt)
 INSERT INTO stations

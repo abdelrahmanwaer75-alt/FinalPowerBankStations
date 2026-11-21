@@ -1,0 +1,197 @@
+/* Shared cards used by the Figma return photo, inspection, and route steps. */
+.workflow-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.workflow-head h1 {
+    margin: 4px 0 6px;
+    font-size: 32px;
+    letter-spacing: -.7px;
+}
+
+.workflow-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, .8fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.upload-zone {
+    display: grid;
+    place-items: center;
+    min-height: 180px;
+    border: 2px dashed #aeb7c8;
+    border-radius: 12px;
+    padding: 20px;
+    background: var(--color-surface-low);
+    text-align: center;
+    cursor: pointer;
+}
+
+.upload-zone:hover,
+.upload-zone:focus-within {
+    border-color: var(--color-primary);
+    background: #edf3ff;
+}
+
+.upload-zone input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    opacity: 0;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.preview {
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+    border-radius: 10px;
+    background: var(--color-surface-low);
+}
+
+.preview img {
+    display: block;
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+}
+
+.preview .file-name {
+    display: block;
+    padding: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+}
+
+.preview button {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    background: #191c20;
+    color: #fff;
+    cursor: pointer;
+}
+
+.review-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.review-status.pending_review {
+    color: #815300;
+    background: #ffddb4;
+}
+
+.review-status.approved {
+    color: #006c45;
+    background: #d8f9e6;
+}
+
+.review-status.manual_review {
+    color: #004299;
+    background: #d9e2ff;
+}
+
+.review-status.rejected {
+    color: #ba1a1a;
+    background: #ffdad6;
+}
+
+.record-list {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0 0;
+    display: grid;
+    gap: 8px;
+}
+
+.record-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--color-surface-low);
+    font-size: 13px;
+}
+
+.record-list small {
+    color: var(--color-muted);
+}
+
+.route-map {
+    min-height: 360px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #eaf0f6;
+}
+
+.route-map>div {
+    width: 100%;
+    height: 360px;
+}
+
+.route-demo {
+    display: grid;
+    place-items: center;
+    min-height: 360px;
+    color: var(--color-muted);
+    text-align: center;
+    padding: 24px;
+}
+
+.route-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.route-summary div {
+    padding: 14px;
+    border-radius: 8px;
+    background: var(--color-surface-low);
+}
+
+.route-summary span {
+    display: block;
+    font-size: 11px;
+    color: var(--color-muted);
+}
+
+.route-summary strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 20px;
+}
+
+@media (max-width: 900px) {
+    .workflow-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .workflow-head h1 {
+        font-size: 26px;
+    }
+}

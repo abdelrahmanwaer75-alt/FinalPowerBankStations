@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="User and staff access management for PowerBank Stations.">
+    <title>Users & access | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/admin-shell.css">
+</head>
+
+<body class="admin-page">
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <a class="admin-brand" href="admin-dashboard.html"><span class="bolt">⚡</span><span>PowerBank Stations<small>NETWORK OS</small></span></a>
+            <nav aria-label="Administration">
+                <a href="admin-dashboard.html">Dashboard</a><span class="nav-group">Operations</span>
+                <a href="admin.html">Stations</a><a href="admin-inventory.html">Inventory</a>
+                <span class="nav-group">Bookings</span><a href="admin-returns.html">Returns</a>
+                <span class="nav-group">Business</span><a href="admin-pricing.html">Pricing</a>
+                <a class="active" href="admin-users.html" aria-current="page">Users & access</a>
+            <a href="admin-maintenance.html">Maintenance</a><a href="admin-audit.html">Audit log</a><a href="admin-reports.html">Reports</a><a href="admin-settings.html">Settings</a></nav>
+        </aside>
+        <div class="admin-main">
+            <header class="admin-topbar"><span class="admin-kicker">Access management</span><span class="admin-user">Staff console</span></header>
+            <main class="admin-content">
+                <div class="admin-title">
+                    <div><span class="admin-kicker">People & permissions</span><h1>Users & roles</h1>
+                        <p>Manage customer accounts and staff access to the network.</p>
+                    </div>
+                </div>
+                <section class="admin-card admin-unavailable" aria-labelledby="access-status-title">
+                    <span class="admin-status-icon" aria-hidden="true">i</span>
+                    <div><h2 id="access-status-title">Access management is not connected yet</h2>
+                        <p>This backend currently has no admin endpoints for listing users, changing account status, or assigning staff roles. No account data or permission changes are being simulated here.</p>
+                        <a class="admin-action secondary" href="admin-dashboard.html">Back to overview</a>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/admin-shell.js"></script>
+</body>
+
+</html>

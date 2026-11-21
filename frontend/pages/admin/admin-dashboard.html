@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PowerBank Stations staff dashboard.">
+    <title>Staff dashboard | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/admin-shell.css">
+</head>
+
+<body class="admin-page">
+    <div class="admin-layout">
+        <aside class="admin-sidebar"><a class="admin-brand" href="admin-dashboard.html"><span
+                    class="bolt">⚡</span><span>PowerBank Stations<small>NETWORK OS</small></span></a>
+            <nav><a class="active" href="admin-dashboard.html">Dashboard</a><span class="nav-group">Operations</span><a
+                    href="admin.html">Stations</a><a href="admin-inventory.html">Inventory</a><span
+                    class="nav-group">Bookings</span><a href="admin-returns.html">Returns</a><span
+                    class="nav-group">Business</span><a href="admin-pricing.html">Pricing</a><a href="admin-users.html">Users & access</a><a href="../customer/map.html">Customer
+                    map</a><a href="admin-maintenance.html">Maintenance</a><a href="admin-audit.html">Audit log</a><a href="admin-reports.html">Reports</a><a href="admin-settings.html">Settings</a></nav>
+        </aside>
+        <div class="admin-main">
+            <header class="admin-topbar"><span class="admin-kicker">Network overview</span><span class="admin-user">Staff console</span></header>
+            <main class="admin-content">
+                <div id="admin-banner" class="admin-banner" hidden></div>
+                <section class="admin-title">
+                    <div><span class="admin-kicker">Service overview</span>
+                        <h1>Network operations</h1>
+                        <p>Live counts built from station and return records.</p>
+                    </div><a class="admin-action" href="admin.html">Manage stations</a>
+                </section>
+                <section class="admin-metrics">
+                    <article class="admin-metric"><span>Stations</span><strong id="station-count">—</strong><small
+                            id="station-note">Loading…</small></article>
+                    <article class="admin-metric"><span>Available PowerBanks</span><strong
+                            id="available-count">—</strong><small>Ready for a customer</small></article>
+                    <article class="admin-metric"><span>Return capacity</span><strong
+                            id="return-slots">—</strong><small>Free docking slots</small></article>
+                    <article class="admin-metric"><span>Pending returns</span><strong
+                            id="pending-count">—</strong><small>Awaiting staff review</small></article>
+                </section>
+                <section class="admin-grid">
+                    <article class="admin-card">
+                        <h2>Station health</h2>
+                        <p>Availability and docking capacity for each station.</p>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Station</th>
+                                    <th>Available</th>
+                                    <th>Return capacity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stations">
+                                <tr>
+                                    <td colspan="4">Loading stations…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </article>
+                    <aside class="admin-card">
+                        <h2>Quick actions</h2>
+                        <p>Each action opens a working staff screen.</p>
+                        <ul class="admin-list">
+                            <li><span>Station records<small>Add, edit, and add PowerBanks</small></span><a
+                                    class="admin-action secondary" href="admin.html">Open</a></li>
+                            <li><span>Return review<small>Approve, reject, or request manual review</small></span><a
+                                    class="admin-action secondary" href="admin-returns.html">Open</a></li>
+                            <li><span>Pricing plans<small>Create and activate rental policies</small></span><a
+                                    class="admin-action secondary" href="admin-pricing.html">Open</a></li>
+                        </ul>
+                    </aside>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/admin-shell.js"></script>
+    <script src="../../js/admin-dashboard.js"></script>
+</body>
+
+</html>

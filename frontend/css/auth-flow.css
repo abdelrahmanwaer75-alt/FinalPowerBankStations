@@ -1,0 +1,101 @@
+/* Verification and recovery screens share the compact Figma authentication card. */
+.flow-card {
+    max-width: 440px;
+}
+
+.flow-card .auth-head p {
+    margin-bottom: 24px;
+}
+
+.flow-form {
+    display: grid;
+    gap: 16px;
+}
+
+.flow-note {
+    margin: 0;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--color-surface-low);
+    color: var(--color-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.code-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+
+.code-row input {
+    min-width: 0;
+    height: 48px;
+    border: 1px solid #c2c6d6;
+    border-radius: 8px;
+    text-align: center;
+    font: 700 20px/1 var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-surface);
+}
+
+.code-row input:focus {
+    outline: 2px solid var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.flow-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.flow-link {
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.flow-link[aria-disabled="true"] {
+    pointer-events: none;
+    opacity: .55;
+}
+
+button.flow-link {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+button.flow-link:disabled,
+button.flow-link.is-disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.verify-destination {
+    margin: -16px 0 24px !important;
+    color: var(--color-primary) !important;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.flow-card .auth-trust {
+    margin-top: 24px;
+}
+
+@media (max-width: 420px) {
+    .code-row {
+        gap: 6px;
+    }
+
+    .code-row input {
+        height: 44px;
+        font-size: 18px;
+    }
+}

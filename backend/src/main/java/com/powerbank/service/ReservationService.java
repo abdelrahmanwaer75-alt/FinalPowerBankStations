@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -23,20 +21,15 @@ public class ReservationService {
     public static final int HOLD_MINUTES = 15;
     static final int MIN_MINUTES = 5;
     static final int MAX_MINUTES = 120;
-    static final Set<ReservationStatus> OPEN =
-            EnumSet.of(ReservationStatus.PENDING, ReservationStatus.CONFIRMED, ReservationStatus.ACTIVE);
-
     private final ReservationRepository reservations;
-    private final RentalRepository rentals;
     private final StationRepository stations;
     private final PowerBankRepository powerBanks;
     private final UserAccountRepository users;
 
-    public ReservationService(ReservationRepository reservations, RentalRepository rentals,
-                              StationRepository stations, PowerBankRepository powerBanks,
+    public ReservationService(ReservationRepository reservations, StationRepository stations,
+                              PowerBankRepository powerBanks,
                               UserAccountRepository users) {
         this.reservations = reservations;
-        this.rentals = rentals;
         this.stations = stations;
         this.powerBanks = powerBanks;
         this.users = users;
@@ -51,13 +44,6 @@ public class ReservationService {
 
         UserAccount user = users.findById(userId)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "NOT_AUTHENTICATED", "Please sign in first"));
-
-        if (rentals.existsByUserIdAndStatus(userId, RentalStatus.ACTIVE)) {
-            throw conflict("ACTIVE_RENTAL_EXISTS", "Finish your current rental before reserving another PowerBank");
-        }
-        if (reservations.existsByUserIdAndStatusIn(userId, OPEN)) {
-            throw conflict("ACTIVE_RESERVATION_EXISTS", "You already have an active reservation");
-        }
 
         Station station = stations.findById(stationId)
                 .filter(s -> s.getStatus() == StationStatus.ACTIVE)

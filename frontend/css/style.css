@@ -1,4 +1,3 @@
-
 :root {
     --bg: #f5f7fb;
     --surface: #ffffff;
@@ -85,7 +84,7 @@ img {
     white-space: nowrap;
 }
 
-.brand > span:last-child {
+.brand>span:last-child {
     color: var(--primary);
 }
 
@@ -129,6 +128,29 @@ img {
 .topbar nav .nav-button:hover {
     background: var(--primary-dark);
     color: white;
+}
+
+.admin-page-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 24px;
+}
+
+.admin-page-links a {
+    padding: 8px 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-page-links a:hover,
+.admin-page-links a[aria-current="page"] {
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 /* =========================================
@@ -375,7 +397,7 @@ h3 {
     font-size: 11px;
 }
 
-.mini-station > span:first-child {
+.mini-station>span:first-child {
     font-size: 23px;
     color: var(--accent);
 }
@@ -434,7 +456,7 @@ h3 {
     text-align: center;
 }
 
-.section-heading > p:last-child {
+.section-heading>p:last-child {
     color: var(--muted);
 }
 
@@ -558,7 +580,7 @@ h3 {
     padding: 0 15px;
 }
 
-.search-box > span {
+.search-box>span {
     font-size: 22px;
     color: var(--muted);
 }
@@ -725,7 +747,7 @@ select:focus {
     padding: 25px;
 }
 
-.auth-aside > p:not(.eyebrow) {
+.auth-aside>p:not(.eyebrow) {
     max-width: 430px;
     color: var(--muted);
 }
@@ -847,7 +869,7 @@ select:focus {
     gap: 5px;
 }
 
-.metric-card > span {
+.metric-card>span {
     color: var(--muted);
     font-size: 12px;
     font-weight: 700;
@@ -950,7 +972,7 @@ td {
     font-size: 14px;
 }
 
-.station-grid > .empty-state {
+.station-grid>.empty-state {
     grid-column: 1 / -1;
 }
 
@@ -1172,6 +1194,7 @@ footer p {
         width: 100%;
     }
 }
+
 /* =========================================
    Classes used by js/app.js
    ========================================= */

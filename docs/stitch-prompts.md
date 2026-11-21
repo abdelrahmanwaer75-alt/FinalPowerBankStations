@@ -76,8 +76,8 @@ Two-column profile page. Left: profile picture with change button, full name, em
 
 Admin screens use a dark-navy sidebar with collapsible sections (Dashboard; Operations: Stations, PowerBanks, Inventory, Transfers; Bookings: Reservations, Rentals, Returns; Business: Pricing, Customers, Reports; Team: Roles and Permissions, Maintenance, Inspection Review, Infrastructure Inspections, Circuit Board Records; System: Audit Logs, Settings, Profile). The top bar has a search field, an account menu, and language and theme switches.
 
-## A1. Admin Login
-Centered admin login card with a different visual style from the customer login, labeled "Administrator Access". Fields: email or username, password with show/hide toggle. Primary Login button. Error state for invalid credentials or an account without admin permission.
+## A1. Shared Login
+Use one centered sign-in card for customers and admins. Put a clear Customer / Admin choice above the form. Both roles use email or phone and password; Admin mode explains that a staff role is required and routes authorized users to the admin console. Show an error state for invalid credentials or missing admin access.
 
 ## A2. Admin Dashboard
 Overview page. Top row of stat cards: total stations, active stations, inactive stations, total PowerBanks, available, rented, under maintenance, active reservations, active rentals, completed returns, pending inspections. Charts: rentals over time (line chart), reservations over time (line chart), PowerBank status distribution (donut chart), station utilization (bar chart), and a revenue simulation card. Recent activity panel with tabs for reservations, rentals, returns, and maintenance requests. Quick action buttons: Add Station, Add PowerBank, View Reservations, View Maintenance Requests.
@@ -110,7 +110,7 @@ Table of rentals with columns: rental ID, customer, PowerBank, pickup station, s
 Table of returns with columns: return ID, rental ID, customer, PowerBank, return station, return time, inspection status badge, and final cost. Row actions: View Details, Review Photos, Approve, Reject (asks for a reason in a dialog), Request Manual Review. Filters for inspection status.
 
 ## A12. Pricing and Rental Policies
-Pricing configuration page. Form card for a pricing plan: base fee, price per hour, daily maximum fee, free period in minutes, late return fee, and reservation fee. Side panel with the active plan summary. Buttons: Create Plan, Edit Plan, Activate Plan, Deactivate Plan. A pricing history table below with effective dates and a note that existing rentals keep their original price.
+Pricing configuration page. Form card for a pricing plan: base fee, price per minute, daily maximum fee, free period in minutes, late return fee, and reservation fee. Side panel with the active plan summary. Buttons: Create Plan, Edit Plan, Activate Plan, Deactivate Plan. A pricing history table below with effective dates and a note that existing rentals keep their saved plan values.
 
 ## A13. Customers Management
 Table of customers with columns: customer ID, full name, email, phone, registration date, account status badge (Active, Suspended), and total rentals. Search bar and status filter. Row actions: View Profile, View Rental History, Activate, Suspend. Customer profile side drawer design showing account activity summary. Passwords are never shown.

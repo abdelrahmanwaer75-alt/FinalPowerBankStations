@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your PowerBank return is complete. Receipt and next steps.">
+    <title>Return complete | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <link rel="stylesheet" href="../../css/details.css">
+    <link rel="stylesheet" href="../../css/rental.css">
+    <link rel="stylesheet" href="../../css/confirmation.css">
+</head>
+<body class="details-page">
+
+<header class="auth-header">
+    <a class="auth-brand" href="map.html"><span class="bolt">⚡</span> PowerBank Stations</a>
+    <nav class="app-links">
+        <a href="map.html">Map</a>
+        <a href="active-rental.html">Active rental</a>
+        <a href="rentals.html">History</a>
+        <a href="profile.html">Profile</a>
+        <a href="login.html" class="sign-link">Sign in</a>
+    </nav>
+</header>
+
+<main class="details-main">
+    <div id="banner" class="data-banner" hidden></div>
+
+    <section class="done" id="done" hidden>
+        <div class="check" aria-hidden="true">✓</div>
+        <span class="pill-green" id="status-pill">Rental closed</span>
+        <h1>Return complete. Thank you!</h1>
+        <p class="muted-lg" id="done-line">—</p>
+    </section>
+
+    <div class="grid-main" id="content" hidden>
+        <section class="card receipt">
+            <div class="receipt-head">
+                <div>
+                    <span class="label">Official receipt</span>
+                    <h2 id="ref">—</h2>
+                </div>
+                <div class="right">
+                    <span class="label">Returned at</span>
+                    <strong id="returned-at">—</strong>
+                </div>
+            </div>
+
+            <div class="tiles">
+                <div class="tile"><span class="label">Duration</span><strong id="duration">—</strong><small id="duration-range">—</small></div>
+                <div class="tile"><span class="label">Rate</span><strong id="rate">—</strong><small>per minute</small></div>
+                <div class="tile hot"><span class="label">Total charge</span><strong id="total">—</strong><small>Final</small></div>
+            </div>
+
+            <div class="rows">
+                <div class="row"><span>Unit</span><strong id="unit">—</strong></div>
+                <div class="row"><span>Pick-up station</span><strong id="pickup">—</strong></div>
+                <div class="row"><span>Return station</span><strong id="return-station">—</strong></div>
+                <div class="row"><span>Photos uploaded</span><strong id="photos">—</strong></div>
+                <div class="row"><span>Inspection status</span><strong id="inspection">—</strong></div>
+            </div>
+            <p class="note">The unit is checked by staff before it returns to the pool. Photos are optional evidence of its condition, not an automatic damage claim.</p>
+        </section>
+
+        <aside class="col-right">
+            <section class="card">
+                <h2>Next steps</h2>
+                <p class="muted-lg">Find another station or review your rental history.</p>
+                <a class="btn-primary" href="map.html">Back to map</a>
+                <a class="btn-secondary" href="rentals.html">View history</a>
+            </section>
+        </aside>
+    </div>
+
+    <section class="card empty" id="empty" hidden>
+        <h2>No return to show</h2>
+        <p>Open your rental history to see completed returns.</p>
+        <a class="btn-primary" href="rentals.html">Go to history</a>
+    </section>
+</main>
+
+<script src="../../js/config.js"></script>
+<script src="../../js/api.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/return-confirmation.js"></script>
+</body>
+</html>

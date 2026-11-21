@@ -5,10 +5,15 @@
 
 let activeRental = null;
 let elapsedTimer = null;
+let costTimer = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     PB.updateSignInLink();
-    if (!PB.requireLogin()) return;
+    if (!PB.requireLogin({
+        inPlace: true,
+        title: 'Sign in to see your dashboard',
+        message: 'Your account summary, reservations, and recent rentals appear here after you sign in.'
+    })) return;
 
     try {
         const [holds, active, history, stations] = await Promise.all([
@@ -37,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             setText('active-station', `Picked up at ${activeRental.pickupStationName}`);
             updateActive();
             elapsedTimer = setInterval(updateActive, 1000);
+            costTimer = setInterval(refreshActiveCost, 30000);
         } else if (holds.length) {
             const h = holds[0];
             show('hold-card');
@@ -62,6 +68,15 @@ function updateActive() {
     const sec = String(s % 60).padStart(2, '0');
     setText('active-elapsed', `${h}:${m}:${sec}`);
     setText('active-cost', PB.money(activeRental.cost));
+}
+
+async function refreshActiveCost() {
+    try {
+        const active = await PB.api.rentals.active();
+        activeRental = active[0] || null;
+        if (activeRental) updateActive();
+        else if (costTimer) clearInterval(costTimer);
+    } catch (_) { /* Keep the last server cost visible during a temporary outage. */ }
 }
 
 function renderRecent(list) {

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import static com.powerbank.service.ReservationService.conflict;
 
-/** Stores return photos on disk and their metadata in MySQL. Only JPEG and PNG, up to 5 MB, max 6 per return. */
+/** Stores return photos on disk and their metadata in the database. Only JPEG and PNG, up to 5 MB, max 6 per return. */
 @Service
 @Transactional
 public class ReturnImageService {

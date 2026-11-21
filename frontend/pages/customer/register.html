@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create a PowerBank Stations account.">
+    <title>Create account | PowerBank Stations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../../css/tokens.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+</head>
+<body class="auth-page" data-mode="register">
+
+<header class="auth-header">
+    <a class="auth-brand" href="map.html"><span class="bolt">⚡</span> PowerBank Stations</a>
+    <nav><span class="hide-sm" aria-label="Help is not available">Help</span></nav>
+</header>
+
+<main class="auth-main">
+    <section class="auth-card" aria-labelledby="auth-heading">
+
+        <div class="auth-telemetry">
+            <span class="auth-chip"><span class="dot"></span> Station Telemetry Active</span>
+            <span class="auth-code">EG-NODE // 094</span>
+        </div>
+
+        <div class="auth-head">
+            <div class="auth-icon" aria-hidden="true">⚡</div>
+            <h1 id="auth-heading">Create your account</h1>
+            <p id="auth-subtitle">Create an account to reserve and rent PowerBanks.</p>
+        </div>
+
+        <form id="auth-form" class="auth-form" novalidate>
+
+            <div class="field" id="name-field">
+                <label for="full-name">Full name</label>
+                <div class="input-wrap">
+                    <input id="full-name" name="fullName" type="text" autocomplete="name" maxlength="120" required>
+                </div>
+                <span class="field-error" id="name-error">Please enter your full name.</span>
+            </div>
+
+            <div class="field">
+                <label for="email">Email address</label>
+                <div class="input-wrap">
+                    <input id="email" name="email" type="email" autocomplete="email" maxlength="190" required>
+                </div>
+                <span class="field-error" id="email-error">Please enter a valid email address (e.g. name@example.com).</span>
+            </div>
+
+            <div class="field">
+                <label for="phone">Phone number</label>
+                <div class="input-wrap">
+                    <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" required>
+                </div>
+                <span class="field-error" id="phone-error">Enter a valid phone number, including the country code when needed.</span>
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="72" required>
+                    <button type="button" class="toggle" id="toggle-password" aria-label="Show password">👁</button>
+                </div>
+                <div class="password-strength" id="password-strength" aria-live="polite">
+                    <div class="strength-heading"><span>Password strength</span><strong id="strength-label">Enter a password</strong></div>
+                    <div class="strength-meter" aria-hidden="true"><i></i><i></i><i></i></div>
+                    <ul>
+                        <li data-rule="length">At least 8 characters</li>
+                        <li data-rule="lowercase">One lowercase letter</li>
+                        <li data-rule="uppercase">One uppercase letter</li>
+                        <li data-rule="number">One number</li>
+                        <li data-rule="special">One special character</li>
+                    </ul>
+                </div>
+                <span class="field-error" id="password-error">Use at least 8 characters with letters, numbers, and a special character.</span>
+            </div>
+
+            <div class="field">
+                <label for="confirm-password">Confirm password</label>
+                <div class="input-wrap">
+                    <input id="confirm-password" name="confirm" type="password" autocomplete="new-password" minlength="8" maxlength="72" required>
+                </div>
+                <span class="field-error" id="confirm-error">The passwords do not match.</span>
+            </div>
+
+            <label class="check-row">
+                <input type="checkbox" id="terms" required>
+                <span>I agree to the terms and conditions</span>
+            </label>
+            <span class="field-error" id="terms-error">Please accept the terms to continue.</span>
+
+            <button class="btn-primary-auth" type="submit" id="auth-submit">Create account →</button>
+            <p class="form-message" id="auth-message" role="status" aria-live="polite"></p>
+        </form>
+
+        <p class="auth-switch">
+            Already registered?<a href="login.html">Log in</a>
+        </p>
+
+        <div class="auth-trust">
+            <span>256-bit encrypted session</span>
+            <span class="sep">•</span>
+            <span>Cairo, Giza &amp; Alex network</span>
+        </div>
+    </section>
+</main>
+
+<footer class="auth-footer">
+    <span>© 2025 PowerBank Stations Network. All rights reserved.</span>
+    <span>
+        <span>Privacy Policy</span>
+        <span>Terms of Service</span>
+    </span>
+</footer>
+
+<script src="../../js/config.js"></script>
+<script src="../../js/api.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/app.js"></script>
+</body>
+</html>
