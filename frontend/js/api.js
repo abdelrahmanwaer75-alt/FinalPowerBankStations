@@ -135,6 +135,10 @@ PB.api = (function () {
             get: (id) => request('GET', `/rentals/${id}`)
         },
         admin: {
+            accountRequests: () => request('GET', '/admin/account-requests'),
+            createAccountRequest: (body) => request('POST', '/admin/account-requests', body),
+            approveAccountRequest: (id, notes) => request('POST', `/admin/account-requests/${id}/approve`, { notes: notes || null }),
+            rejectAccountRequest: (id, notes) => request('POST', `/admin/account-requests/${id}/reject`, { notes: notes || null }),
             returns: (status = 'PENDING_REVIEW') => request('GET', `/admin/returns?status=${status}`),
             approve: (id, notes) => request('POST', `/admin/returns/${id}/approve`, { notes: notes || null }),
             reject: (id, reason) => request('POST', `/admin/returns/${id}/reject`, { notes: reason }),

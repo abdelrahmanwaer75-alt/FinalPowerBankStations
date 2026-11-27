@@ -1,8 +1,8 @@
 package com.powerbank.ds;
 
 import com.powerbank.dto.StationResponse;
-import powerbank.models.Station;
-import powerbank.sorting.Sorting;
+import datastructure.models.Station;
+import datastructure.sorting.Sorting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Uses the course's own sorting class (powerbank.sorting.Sorting) to order stations by available units.
+ * Uses the course's own sorting class (datastructure.sorting.Sorting) to order stations by available units.
  * The Data Structures Station model uses long IDs, matching the database's BIGINT keys.
  */
 public final class StationRanking {

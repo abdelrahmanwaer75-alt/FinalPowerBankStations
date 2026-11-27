@@ -10,4 +10,10 @@ public interface AdminRoleRepository extends Repository<com.powerbank.entity.Use
                    "where ur.user_id = :userId and r.is_enabled = true " +
                    "and r.name in ('SUPER_ADMIN','ADMIN','STATION_MANAGER')", nativeQuery = true)
     Number countStaffRoles(@Param("userId") long userId);
+
+    @Query(value = "select count(*) from user_roles ur join roles r on r.id = ur.role_id " +
+                   "join users u on u.id = ur.user_id " +
+                   "where ur.user_id = :userId and lower(u.email) = '009ardh@gmail.com' " +
+                   "and r.is_enabled = true and r.name = 'SUPER_ADMIN'", nativeQuery = true)
+    Number countSuperAdminRoles(@Param("userId") long userId);
 }

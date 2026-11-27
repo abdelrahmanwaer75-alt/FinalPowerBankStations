@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+frontend_dir="$(cd "$(dirname "$0")" && pwd)"
+
 if [[ -z "${API_BASE_URL:-}" ]]; then
   echo "API_BASE_URL must point to the deployed backend URL." >&2
   exit 1
@@ -11,4 +13,4 @@ if [[ ! "$API_BASE_URL" =~ ^https://[A-Za-z0-9.-]+(:[0-9]+)?/?$ ]]; then
 fi
 
 api_origin="${API_BASE_URL%/}"
-printf "window.APP_CONFIG = { API_BASE_URL: '%s/api' };\n" "$api_origin" > frontend/js/config.js
+printf "window.APP_CONFIG = { API_BASE_URL: '%s/api' };\n" "$api_origin" > "$frontend_dir/js/config.js"

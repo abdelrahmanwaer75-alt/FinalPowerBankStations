@@ -118,6 +118,14 @@ public class AuthService {
         return new ActionResponse("If this account exists, a recovery code was issued.");
     }
 
+    /** Issues the first password setup code after a Super Admin approves a staff account. */
+    @Transactional
+    public void issuePasswordSetupCode(long userId) {
+        UserAccount user = users.findById(userId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "ACCOUNT_NOT_FOUND", "Account not found."));
+        issueCode(user, AuthTokenPurpose.RESET_PASSWORD);
+    }
+
     @Transactional
     public ActionResponse resetPassword(ResetPasswordRequest request) {
         UserAccount user = userFor(request.identifier());

@@ -1,6 +1,7 @@
 package com.powerbank.controller;
 
 import com.powerbank.admin.AdminAccess;
+import com.powerbank.admin.AdminAccountService;
 import com.powerbank.admin.AdminStationService;
 import com.powerbank.admin.AuditService;
 import com.powerbank.admin.PricingAdminService;
@@ -26,20 +27,62 @@ public class AdminController {
     private final AdminStationService stations;
     private final PricingAdminService pricing;
     private final AuditService audit;
+    private final AdminAccountService adminAccounts;
 
     public AdminController(AdminAccess access, ReturnReviewService reviews, AdminStationService stations,
-                           PricingAdminService pricing, AuditService audit) {
+                           PricingAdminService pricing, AuditService audit, AdminAccountService adminAccounts) {
         this.access = access;
         this.reviews = reviews;
         this.stations = stations;
         this.pricing = pricing;
         this.audit = audit;
+        this.adminAccounts = adminAccounts;
     }
 
     private long staff(Authentication auth) {
         long id = CurrentUser.id(auth);
         access.requireStaff(id);
         return id;
+    }
+
+    private long superAdmin(Authentication auth) {
+        long id = CurrentUser.id(auth);
+        access.requireSuperAdmin(id);
+        return id;
+    }
+
+    /* ---- staff account requests ---- */
+
+    @GetMapping("/account-requests")
+    AdminAccountRequestsResponse accountRequests(Authentication auth) {
+        return adminAccounts.list(staff(auth));
+    }
+
+    @PostMapping("/account-requests")
+    ResponseEntity<AdminAccountRequestRow> createAccountRequest(Authentication auth,
+            @Valid @RequestBody AdminAccountRequestCreate request) {
+        long actor = staff(auth);
+        AdminAccountRequestRow created = adminAccounts.create(actor, request);
+        audit.success(actor, "STAFF_ACCOUNT_REQUESTED", "admin_account_request", created.id(), null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PostMapping("/account-requests/{id}/approve")
+    AdminAccountRequestRow approveAccountRequest(Authentication auth, @PathVariable Long id,
+            @Valid @RequestBody(required = false) ReviewRequest request) {
+        long actor = superAdmin(auth);
+        AdminAccountRequestRow approved = adminAccounts.approve(id, actor, request == null ? null : request.notes());
+        audit.success(actor, "STAFF_ACCOUNT_APPROVED", "admin_account_request", id, null);
+        return approved;
+    }
+
+    @PostMapping("/account-requests/{id}/reject")
+    AdminAccountRequestRow rejectAccountRequest(Authentication auth, @PathVariable Long id,
+            @Valid @RequestBody(required = false) ReviewRequest request) {
+        long actor = superAdmin(auth);
+        AdminAccountRequestRow rejected = adminAccounts.reject(id, actor, request == null ? null : request.notes());
+        audit.success(actor, "STAFF_ACCOUNT_REJECTED", "admin_account_request", id, null);
+        return rejected;
     }
 
     /* ---- returns ---- */

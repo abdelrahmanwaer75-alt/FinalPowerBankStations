@@ -178,13 +178,13 @@ function tick() {
     const s = String(elapsed % 60).padStart(2, '0');
     setText('elapsed', `${h}:${m}:${s}`);
 
-    const inCycle = elapsed % 3600;
-    const fraction = inCycle / 3600;
+    const inCycle = elapsed % 60;
+    const fraction = inCycle / 60;
     const bar = document.getElementById('ring-bar');
     bar.style.strokeDasharray = RING;
     bar.style.strokeDashoffset = RING * (1 - fraction);
 
-    const nextDue = new Date(new Date(rental.startTime).getTime() + (Math.floor(elapsed / 3600) + 1) * 3600 * 1000);
+    const nextDue = new Date(new Date(rental.startTime).getTime() + (Math.floor(elapsed / 60) + 1) * 60 * 1000);
     setText('next-due', nextDue.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
     const cap = pricing && pricing.dailyMaxFee ? Number(pricing.dailyMaxFee) : null;

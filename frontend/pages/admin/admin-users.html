@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="User and staff access management for PowerBank Stations.">
+    <meta name="description" content="Request and approve staff access for PowerBank Stations.">
     <title>Users & access | PowerBank Stations</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +11,6 @@
     <link rel="stylesheet" href="../../css/tokens.css">
     <link rel="stylesheet" href="../../css/admin-shell.css">
 </head>
-
 <body class="admin-page">
     <div class="admin-layout">
         <aside class="admin-sidebar">
@@ -23,30 +21,46 @@
                 <span class="nav-group">Bookings</span><a href="admin-returns.html">Returns</a>
                 <span class="nav-group">Business</span><a href="admin-pricing.html">Pricing</a>
                 <a class="active" href="admin-users.html" aria-current="page">Users & access</a>
-            <a href="admin-maintenance.html">Maintenance</a><a href="admin-audit.html">Audit log</a><a href="admin-reports.html">Reports</a><a href="admin-settings.html">Settings</a></nav>
+                <a href="admin-maintenance.html">Maintenance</a><a href="admin-audit.html">Audit log</a>
+                <a href="admin-reports.html">Reports</a><a href="admin-settings.html">Settings</a>
+            </nav>
         </aside>
         <div class="admin-main">
             <header class="admin-topbar"><span class="admin-kicker">Access management</span><span class="admin-user">Staff console</span></header>
             <main class="admin-content">
-                <div class="admin-title">
-                    <div><span class="admin-kicker">People & permissions</span><h1>Users & roles</h1>
-                        <p>Manage customer accounts and staff access to the network.</p>
-                    </div>
-                </div>
-                <section class="admin-card admin-unavailable" aria-labelledby="access-status-title">
-                    <span class="admin-status-icon" aria-hidden="true">i</span>
-                    <div><h2 id="access-status-title">Access management is not connected yet</h2>
-                        <p>This backend currently has no admin endpoints for listing users, changing account status, or assigning staff roles. No account data or permission changes are being simulated here.</p>
-                        <a class="admin-action secondary" href="admin-dashboard.html">Back to overview</a>
+                <div class="admin-title"><div><span class="admin-kicker">People & permissions</span><h1>Staff access</h1>
+                    <p>Staff accounts are activated only after the Super Admin approves the request.</p></div></div>
+                <div id="admin-banner" class="admin-banner" role="status" aria-live="polite" hidden></div>
+                <section class="admin-card" id="request-card">
+                    <h2>Request a staff account</h2>
+                    <p>Submit an ADMIN or STATION_MANAGER account for Super Admin review. No account is created before approval.</p>
+                    <form id="staff-request-form" class="admin-form">
+                        <div class="form-row">
+                            <label>Full name<input id="staff-name" maxlength="120" autocomplete="name" required></label>
+                            <label>Email address<input id="staff-email" type="email" maxlength="190" autocomplete="email" required></label>
+                        </div>
+                        <div class="form-row">
+                            <label>Phone (optional)<input id="staff-phone" type="tel" maxlength="20" autocomplete="tel"></label>
+                            <label>Requested role<select id="staff-role" required><option value="ADMIN">Admin</option><option value="STATION_MANAGER">Station manager</option></select></label>
+                        </div>
+                        <div><button class="admin-action" id="submit-request" type="submit">Send for approval</button></div>
+                    </form>
+                </section>
+                <section class="admin-card" style="margin-top:20px" aria-labelledby="requests-title">
+                    <h2 id="requests-title">Staff account requests</h2>
+                    <p id="request-scope">Loading requests…</p>
+                    <div style="overflow-x:auto">
+                        <table class="admin-table">
+                            <thead><tr><th>Requested account</th><th>Role</th><th>Requested by</th><th>Status</th><th>Review</th></tr></thead>
+                            <tbody id="requests-table"><tr><td colspan="5">Loading…</td></tr></tbody>
+                        </table>
                     </div>
                 </section>
             </main>
         </div>
     </div>
-    <script src="../../js/config.js"></script>
-    <script src="../../js/api.js"></script>
-    <script src="../../js/common.js"></script>
-    <script src="../../js/admin-shell.js"></script>
+    <script src="../../js/config.js"></script><script src="../../js/api.js"></script>
+    <script src="../../js/common.js"></script><script src="../../js/admin-shell.js"></script>
+    <script src="../../js/admin-users.js"></script>
 </body>
-
 </html>

@@ -8,14 +8,14 @@
             "type": "java",
             "name": "DatabaseMain",
             "request": "launch",
-            "mainClass": "powerbank.DatabaseMain",
+            "mainClass": "datastructure.DatabaseMain",
             "projectName": "powerbank-stations"
         },
         {
             "type": "java",
             "name": "Main",
             "request": "launch",
-            "mainClass": "powerbank.Main",
+            "mainClass": "datastructure.Main",
             "projectName": "powerbank-stations"
         },
         {

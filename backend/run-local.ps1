@@ -16,11 +16,14 @@ param(
 $ErrorActionPreference = "Stop"
 Set-Location -Path $PSScriptRoot
 
-# 1) Password (hidden input, kept only in memory)
-$secure = Read-Host "MySQL database password" -AsSecureString
-$bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
-$password = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
-[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+# 1) Password: reuse the launcher-provided value, or prompt when run directly.
+$password = $env:DB_PASSWORD
+if ([string]::IsNullOrWhiteSpace($password)) {
+    $secure = Read-Host "MySQL database password" -AsSecureString
+    $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+    try { $password = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr) }
+    finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr) }
+}
 if ([string]::IsNullOrWhiteSpace($password)) { Write-Host "Password is empty." -ForegroundColor Red; exit 1 }
 
 # 2) Network check before starting Maven

@@ -1,8 +1,9 @@
 -- =====================================================================
 -- PowerBank Stations - sample data
--- Run AFTER schema.sql:  mysql -u root -p powerbank_stations < database/sample_data.sql
--- No user accounts are inserted here. Create the first Super Admin with the
--- database/make_admin.sql after registering and verifying an account.
+-- Run once after schema.sql from MySQL Command Line Client:
+-- SOURCE G:/project/PowerBankStations/database/sample_data.sql;
+-- No customer accounts are inserted here. Create the Super Admin with the
+-- single database/add_admin_009ardh.sql script.
 -- =====================================================================
 USE powerbank_stations;
 
@@ -96,4 +97,5 @@ SELECT CONCAT('PB-', LPAD(s.id, 3, '0'), '-', LPAD(seq.n, 2, '0')),
        s.id,
        'AVAILABLE',
        NOW()
-FROM stations s CROSS JOIN seq;
+FROM stations s CROSS JOIN seq
+WHERE s.status = 'ACTIVE';

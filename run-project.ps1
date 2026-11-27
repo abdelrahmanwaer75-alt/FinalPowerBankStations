@@ -1,7 +1,10 @@
 param(
     [int]$MySqlPort = 3306,
     [int]$BackendPort = 8080,
-    [int]$FrontendPort = 3000
+    [int]$FrontendPort = 3000,
+    [string]$DbHost = 'localhost',
+    [string]$DbUser = 'root',
+    [string]$MySqlExe = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -15,7 +18,10 @@ function Test-LocalPort([int]$Port) {
 
 # Start the installed local MySQL service when it is not already listening.
 if (-not (Test-LocalPort $MySqlPort)) {
-    $mysqlServices = @(Get-Service -Name 'MySQL*' -ErrorAction SilentlyContinue)
+    $mysqlServices = @(
+        Get-Service -Name 'MySQL*' -ErrorAction SilentlyContinue
+        Get-Service -Name 'MariaDB*' -ErrorAction SilentlyContinue
+    ) | Sort-Object Name -Unique
     $mysqlService = $mysqlServices | Where-Object Status -eq 'Running' | Select-Object -First 1
     if (-not $mysqlService) { $mysqlService = $mysqlServices | Select-Object -First 1 }
     if (-not $mysqlService) {
@@ -35,12 +41,35 @@ if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
     throw 'Python was not found. Install Python 3 and make sure python.exe is on PATH.'
 }
 
-if (-not (Test-LocalPort $BackendPort)) {
-    Write-Host "Opening backend console on port $BackendPort..." -ForegroundColor Cyan
-    Start-Process -FilePath 'powershell.exe' -WorkingDirectory $backendDir -ArgumentList @(
-        '-NoExit', '-ExecutionPolicy', 'Bypass', '-Command', '& .\run-local.ps1'
-    )
-} else { Write-Host "Port $BackendPort is already in use; leaving the existing process alone." -ForegroundColor Yellow }
+$backendAlreadyRunning = Test-LocalPort $BackendPort
+$restoreDbPassword = $env:DB_PASSWORD
+$hadDbPassword = Test-Path Env:DB_PASSWORD
+
+try {
+    if (-not $backendAlreadyRunning) {
+        Write-Host 'Applying pending database migrations...' -ForegroundColor Cyan
+        $migrationScript = Join-Path $projectRoot 'database\run-migrations.ps1'
+        $migrationArgs = @{
+            DbHost = $DbHost
+            DbPort = $MySqlPort
+            DbUser = $DbUser
+        }
+        if ($MySqlExe) { $migrationArgs.MySqlExe = $MySqlExe }
+        & $migrationScript @migrationArgs
+
+        Write-Host "Opening backend console on port $BackendPort..." -ForegroundColor Cyan
+        $backendCommand = "& .\run-local.ps1 -DbHost '$DbHost' -DbUser '$DbUser' -DbPort $MySqlPort"
+        Start-Process -FilePath 'powershell.exe' -WorkingDirectory $backendDir -ArgumentList @(
+            '-NoExit', '-ExecutionPolicy', 'Bypass', '-Command', $backendCommand
+        )
+    } else {
+        Write-Host "Port $BackendPort is already in use; the running backend was left alone and migrations were skipped. Stop it and rerun this script to apply database changes." -ForegroundColor Yellow
+    }
+} finally {
+    # Pass the password only to the backend process; don't leave it exposed to the frontend server.
+    if ($hadDbPassword) { $env:DB_PASSWORD = $restoreDbPassword }
+    else { Remove-Item Env:DB_PASSWORD -ErrorAction SilentlyContinue }
+}
 
 if (-not (Test-LocalPort $FrontendPort)) {
     Write-Host "Opening frontend console on port $FrontendPort..." -ForegroundColor Cyan

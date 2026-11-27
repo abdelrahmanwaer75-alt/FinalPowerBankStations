@@ -3,120 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Confirm your PowerBank reservation before the hold expires.">
-    <title>Confirm reservation | PowerBank Stations</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="../../css/tokens.css">
-    <link rel="stylesheet" href="../../css/auth.css">
-    <link rel="stylesheet" href="../../css/details.css">
-    <link rel="stylesheet" href="../../css/reserve.css">
+    <meta http-equiv="refresh" content="0; url=active-rental.html">
+    <meta name="description" content="Manage your PowerBank reservation and active rentals.">
+    <title>My PowerBanks | PowerBank Stations</title>
+    <script>location.replace('active-rental.html' + location.search + location.hash);</script>
 </head>
-<body class="details-page">
-
-<header class="auth-header">
-    <a class="auth-brand" href="map.html"><span class="bolt">⚡</span> PowerBank Stations</a>
-    <nav class="app-links">
-        <a href="map.html">Map</a>
-        <a href="active-rental.html">Active rental</a>
-        <a href="rentals.html">History</a>
-        <a href="login.html" class="sign-link">Sign in</a>
-    </nav>
-</header>
-
-<main class="details-main">
-    <p class="crumbs"><a id="back-link" href="map.html">← Back to station</a></p>
-
-    <div id="banner" class="data-banner" hidden></div>
-
-    <div class="reserve-head">
-        <span class="pill-blue">Active reservation</span>
-        <h1>Confirm your reservation</h1>
-        <p id="subtitle" class="muted-lg">Loading your reservation…</p>
-    </div>
-
-    <div class="grid-main" id="content" hidden>
-        <div class="card rental-picker" id="reservation-picker-wrap" hidden>
-            <label for="reservation-picker">Choose a reserved PowerBank</label>
-            <select id="reservation-picker"></select>
-        </div>
-        <div class="col-left">
-            <section class="card timer-card">
-                <div class="ring-wrap">
-                    <svg viewBox="0 0 176 176" class="ring" aria-hidden="true">
-                        <circle cx="88" cy="88" r="80" class="ring-track" />
-                        <circle cx="88" cy="88" r="80" class="ring-bar" id="ring-bar" />
-                    </svg>
-                    <div class="ring-text">
-                        <span>HOLD</span>
-                        <strong id="countdown">--:--</strong>
-                        <small id="hold-state">Unit locked</small>
-                    </div>
-                </div>
-                <div class="timer-info">
-                    <span class="pill-green">Hardware slot reserved</span>
-                    <h2>Reserved for <span id="hold-minutes">15</span> minutes</h2>
-                    <p>Your PowerBank is held for you. If you do not start the rental before the timer ends, the reservation expires and the PowerBank returns to the pool.</p>
-                    <p class="note">You are not charged for the reservation.</p>
-                </div>
-            </section>
-
-            <section class="card">
-                <div class="unit-head">
-                    <div class="unit-icon" aria-hidden="true">🔋</div>
-                    <div>
-                        <strong id="unit-serial">—</strong>
-                        <small>PowerBank 10000mAh</small>
-                    </div>
-                </div>
-                <div class="station-row">
-                    <div>
-                        <span class="label">Pickup station</span>
-                        <strong id="station-name">—</strong>
-                        <small id="station-address"></small>
-                    </div>
-                    <a id="station-link" class="text-link" href="map.html">View details →</a>
-                </div>
-            </section>
-        </div>
-
-        <aside class="col-right">
-            <section class="card">
-                <h2>Tariff summary</h2>
-                <div class="line"><span>Per-minute rate</span><strong id="rate-hour">—</strong></div>
-                <div class="line"><span>Free period</span><strong id="free-period" class="green">—</strong></div>
-                <div class="line"><span>Daily maximum</span><strong id="rate-daily">—</strong></div>
-                <div class="line"><span>Reservation fee</span><strong id="rate-reserve">—</strong></div>
-                <p class="note">Payment is simulated for this project. No card is charged.</p>
-            </section>
-
-            <div class="actions-col">
-                <button class="btn-primary" type="button" id="confirm-btn">Start rental (unlock bay)</button>
-                <button class="btn-secondary" type="button" id="cancel-btn">Cancel reservation</button>
-            </div>
-
-            <section class="card steps">
-                <span class="label">Quick process</span>
-                <ol>
-                    <li>Confirm the reservation now to keep the PowerBank for you.</li>
-                    <li>Go to the station and tap your phone or scan the station code (simulated).</li>
-                    <li>The PowerBank pops out of its slot. Return it to any active station.</li>
-                </ol>
-            </section>
-        </aside>
-    </div>
-
-    <section class="card empty" id="empty" hidden>
-        <h2>No active reservation</h2>
-        <p>You do not have a PowerBank on hold right now. Find a station and reserve one.</p>
-        <a class="btn-primary" href="map.html">Find a station</a>
-    </section>
-</main>
-
-<script src="../../js/config.js"></script>
-<script src="../../js/api.js"></script>
-<script src="../../js/common.js"></script>
-<script src="../../js/reserve.js?v=20261121-multi-rentals"></script>
+<body>
+    <p>Opening your reservations and rentals… <a href="active-rental.html">Continue</a></p>
 </body>
 </html>

@@ -109,7 +109,7 @@
     background: #d8f9e6;
 }
 
-.review-status.manual_review {
+.review-status.requires_manual_review {
     color: #004299;
     background: #d9e2ff;
 }
