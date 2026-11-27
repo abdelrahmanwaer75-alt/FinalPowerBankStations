@@ -31,6 +31,7 @@ com\powerbank\dto\StationUpsertRequest.class
 com\powerbank\dto\AvailabilityResponse.class
 datastructure\linkedlist\ActiveRentalList.class
 com\powerbank\dto\AdminAccountRequestRow.class
+com\powerbank\entity\PowerBankStatusEvent.class
 com\powerbank\dto\CreateReservationRequest.class
 com\powerbank\admin\AdminStationService.class
 com\powerbank\admin\AuditService.class
@@ -42,6 +43,7 @@ com\powerbank\repository\ReservationRepository.class
 com\powerbank\repository\RentalPricingSnapshotRepository.class
 com\powerbank\dto\WaitingListResponse.class
 com\powerbank\controller\AuthController.class
+com\powerbank\dto\PowerBankStatusEventResponse.class
 com\powerbank\dto\PricingResponse.class
 com\powerbank\exception\ApiException.class
 com\powerbank\dto\UserSummary.class
@@ -111,6 +113,7 @@ com\powerbank\controller\WaitingListController.class
 com\powerbank\dto\AuthResponse.class
 com\powerbank\dto\ReservationResponse.class
 com\powerbank\entity\AuthTokenPurpose.class
+com\powerbank\admin\PowerBankStatusHistoryService.class
 com\powerbank\dto\StartRentalRequest.class
 com\powerbank\controller\StationController.class
 com\powerbank\dto\CreateReturnRequest.class
@@ -120,6 +123,7 @@ com\powerbank\repository\RentalReturnRepository.class
 com\powerbank\security\CurrentUser.class
 com\powerbank\entity\StationStatus.class
 com\powerbank\repository\PricingPlanRepository.class
+com\powerbank\repository\PowerBankStatusEventRepository.class
 com\powerbank\entity\AuditLog.class
 com\powerbank\entity\UserAccount.class
 com\powerbank\repository\PowerBankRepository.class

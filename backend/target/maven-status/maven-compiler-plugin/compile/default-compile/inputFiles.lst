@@ -2,6 +2,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\admin\AdminAcce
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\admin\AdminAccountService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\admin\AdminStationService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\admin\AuditService.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\admin\PowerBankStatusHistoryService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\admin\PricingAdminService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\admin\ReturnReviewService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\config\SecurityConfig.java
@@ -31,6 +32,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\IdentifierR
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\ImageResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\JoinWaitlistRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\LoginRequest.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\PowerBankStatusEventResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\PricingResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\PricingUpsertRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\RegisterRequest.java
@@ -57,6 +59,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\Inspecti
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\ManualReview.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\PowerBank.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\PowerBankStatus.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\PowerBankStatusEvent.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\PricingPlan.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\Rental.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\RentalPricingSnapshot.java
@@ -81,6 +84,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\Auth
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\InspectionImageRepository.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\ManualReviewRepository.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\PowerBankRepository.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\PowerBankStatusEventRepository.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\PricingPlanRepository.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\RentalPricingSnapshotRepository.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\RentalRepository.java
