@@ -109,9 +109,42 @@ PB.loadStations = async function () {
     });
 };
 
+PB.joinWaitlist = async function (stationId, stationName = 'this station') {
+    const pending = { stationId: Number(stationId), stationName: String(stationName || 'this station'), createdAt: Date.now() };
+    try { sessionStorage.removeItem('pb_pending_reservation'); } catch (_) { /* Ignore storage failures. */ }
+    if (!PB.api.hasToken()) {
+        try { sessionStorage.setItem('pb_pending_waitlist', JSON.stringify(pending)); } catch (_) { /* The user can still sign in and join manually. */ }
+        PB.requireLogin();
+        return null;
+    }
+    try {
+        const entry = await PB.api.waitlist.join(pending.stationId);
+        try { sessionStorage.removeItem('pb_pending_waitlist'); } catch (_) { /* Ignore storage failures. */ }
+        const message = entry.status === 'NOTIFIED'
+            ? `A PowerBank became available at ${entry.stationName}. Check availability and reserve it.`
+            : `You joined the waitlist for ${entry.stationName}. Your position is ${entry.queuePosition ?? 'next'}.`;
+        PB.toast(message);
+        window.dispatchEvent(new CustomEvent('pb:waitlist-updated', { detail: entry }));
+        return entry;
+    } catch (error) {
+        if (error.status === 401) {
+            try { sessionStorage.setItem('pb_pending_waitlist', JSON.stringify(pending)); } catch (_) { /* Keep the user on this page if storage is blocked. */ }
+            location.href = 'login.html?next=' + encodeURIComponent(location.pathname.split('/').pop() + location.search);
+            return null;
+        }
+        try { sessionStorage.removeItem('pb_pending_waitlist'); } catch (_) { /* Ignore storage failures. */ }
+        if (error.code === 'POWERBANKS_AVAILABLE_NOW') {
+            window.dispatchEvent(new CustomEvent('pb:station-availability-changed', { detail: { stationId: pending.stationId } }));
+            PB.toast('A PowerBank is available now. Refreshing this station so you can reserve it.', true);
+        } else PB.toast(error.message, true);
+        return null;
+    }
+};
+
 /* Reserves a PowerBank at a station, then opens My Rental. */
 PB.reserveStation = async function (stationId, stationName, durationMinutes = 15) {
     const pendingReservation = { stationId: Number(stationId), stationName: String(stationName || 'station'), durationMinutes: Number(durationMinutes) || 15, createdAt: Date.now() };
+    try { sessionStorage.removeItem('pb_pending_waitlist'); } catch (_) { /* Ignore storage failures. */ }
     const savePendingReservation = () => {
         try { sessionStorage.setItem('pb_pending_reservation', JSON.stringify(pendingReservation)); } catch (_) { /* Sign-in still works if storage is unavailable. */ }
     };
@@ -137,10 +170,13 @@ PB.reserveStation = async function (stationId, stationName, durationMinutes = 15
             return;
         }
         clearPendingReservation();
-        const message = err.code === 'NO_POWER_BANK_AVAILABLE'
-            ? 'There are no PowerBanks available at this station now. Refresh the station list.'
-            : err.message;
-        PB.toast(message, true);
+        if (err.code === 'NO_POWER_BANK_AVAILABLE' || err.code === 'POWERBANK_JUST_TAKEN') {
+            PB.toast(`No PowerBanks are available at ${stationName}. Joining the waiting list…`);
+            await PB.joinWaitlist(stationId, stationName);
+            reserveButtons.forEach((button) => { button.disabled = false; });
+            return;
+        }
+        PB.toast(err.message, true);
         reserveButtons.forEach((button) => { button.disabled = false; });
     }
 };
@@ -163,6 +199,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionStorage.removeItem('pb_pending_reservation');
                 setTimeout(() => PB.reserveStation(pending.stationId, pending.stationName, pending.durationMinutes), 0);
             } else if (pending) sessionStorage.removeItem('pb_pending_reservation');
+        } catch (_) { /* Invalid or unavailable session data should not block page startup. */ }
+        try {
+            const pendingWaitlist = JSON.parse(sessionStorage.getItem('pb_pending_waitlist') || 'null');
+            if (pendingWaitlist && Number.isFinite(Number(pendingWaitlist.stationId)) && Date.now() - Number(pendingWaitlist.createdAt) < 10 * 60_000) {
+                sessionStorage.removeItem('pb_pending_waitlist');
+                setTimeout(() => PB.joinWaitlist(pendingWaitlist.stationId, pendingWaitlist.stationName), 0);
+            } else if (pendingWaitlist) sessionStorage.removeItem('pb_pending_waitlist');
         } catch (_) { /* Invalid or unavailable session data should not block page startup. */ }
     }
     const header = document.querySelector('body > header');

@@ -25,14 +25,16 @@ public class ReservationService {
     private final StationRepository stations;
     private final PowerBankRepository powerBanks;
     private final UserAccountRepository users;
+    private final WaitingListService waitingList;
 
     public ReservationService(ReservationRepository reservations, StationRepository stations,
                               PowerBankRepository powerBanks,
-                              UserAccountRepository users) {
+                              UserAccountRepository users, WaitingListService waitingList) {
         this.reservations = reservations;
         this.stations = stations;
         this.powerBanks = powerBanks;
         this.users = users;
+        this.waitingList = waitingList;
     }
 
     public ReservationResponse create(long userId, long stationId, int durationMinutes) {
@@ -60,6 +62,8 @@ public class ReservationService {
         Reservation reservation = new Reservation(
                 ref("RSV"), user, station, bank, durationMinutes, now.plus(Duration.ofMinutes(durationMinutes)));
         reservations.save(reservation);
+        waitingList.fulfill(userId, stationId);
+        waitingList.reconcileAvailableStock(stationId);
         return toResponse(reservation);
     }
 
@@ -117,6 +121,7 @@ public class ReservationService {
         PowerBank bank = r.getPowerBank();
         if (bank != null && bank.getStatus() == PowerBankStatus.RESERVED) {
             bank.setStatus(PowerBankStatus.AVAILABLE);
+            if (bank.getStation() != null) waitingList.promoteForAvailableStock(bank.getStation().getId(), 1);
         }
     }
 

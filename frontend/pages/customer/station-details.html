@@ -56,10 +56,16 @@
                     </select>
                 </label>
                 <button class="btn-primary" type="button" id="reserve-btn" disabled>Reserve a PowerBank</button>
+                <button class="btn-secondary" type="button" id="waitlist-btn" hidden>Join waiting list</button>
                 <a class="btn-secondary" id="directions" href="map.html" target="_blank" rel="noopener">Open in OpenStreetMap</a>
                 <a class="btn-secondary" id="route-link" href="map.html">Plan route</a>
             </div>
         </div>
+    </section>
+
+    <section class="card waitlist-panel" id="waitlist-panel" hidden aria-live="polite">
+        <div><span class="label">Station waitlist</span><p id="waitlist-copy">—</p></div>
+        <button class="btn-secondary" type="button" id="waitlist-leave">Leave waiting list</button>
     </section>
 
     <div class="grid-two">
@@ -95,10 +101,10 @@
 </main>
 
 <script src="../../js/config.js"></script>
-<script src="../../js/api.js"></script>
-<script src="../../js/common.js"></script>
+<script src="../../js/api.js?v=20261122-booking-waitlist"></script>
+<script src="../../js/common.js?v=20261122-booking-waitlist"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="../../js/station-details.js"></script>
+<script src="../../js/station-details.js?v=20261122-booking-waitlist"></script>
 </body>
 </html>

@@ -16,6 +16,7 @@ const state = {
 };
 
 let STATIONS = [];
+let WAITLIST_ENTRIES = [];
 let map = null;
 let userMarker = null;
 const markers = new Map();
@@ -81,9 +82,13 @@ function renderList() {
     ul.innerHTML = list.map((s) => {
         const selected = s.id === state.selectedId ? ' is-selected' : '';
         const empty = s.available === 0 ? ' is-empty' : '';
+        const waitEntry = WAITLIST_ENTRIES.find((entry) => Number(entry.stationId) === Number(s.id));
         const availBadge = s.available > 0
             ? `<span class="badge ok">${s.available} available units</span>`
             : '<span class="badge">0 units available</span>';
+        const waitBadge = waitEntry
+            ? `<span class="badge info">${waitEntry.status === 'NOTIFIED' && s.available > 0 ? 'PowerBank available for you' : `Waiting list · position ${waitEntry.queuePosition ?? '—'}`}</span>`
+            : '';
         const returnBadge = s.returnSlots > 0
             ? `<span class="badge info">${s.returnSlots} return slots</span>`
             : '';
@@ -97,7 +102,7 @@ function renderList() {
                     <span class="card-distance">${formatDistance(s.distance)}</span>
                 </div>
                 <div class="badges">
-                    ${availBadge}${returnBadge}
+                    ${availBadge}${waitBadge}${returnBadge}
                     <span class="badge">${esc(s.hours)}</span>
                 </div>
                 <div class="card-footer">
@@ -105,9 +110,12 @@ function renderList() {
                     <div class="card-actions">
                         <button type="button" class="btn btn-light" data-action="view" data-id="${esc(s.id)}">View on map</button>
                         <a class="btn btn-light" href="station-details.html?id=${esc(s.id)}">Details</a>
-                        <button type="button" class="btn btn-primary" data-action="reserve"
-                                data-id="${esc(s.id)}" data-name="${esc(s.name)}"
-                                ${s.available === 0 ? 'disabled' : ''}>Reserve</button>
+                        ${s.available > 0
+                            ? `<button type="button" class="btn btn-primary" data-action="reserve" data-id="${esc(s.id)}" data-name="${esc(s.name)}">Reserve</button>`
+                            : waitEntry
+                                ? `<button type="button" class="btn btn-light" data-action="leave-waitlist" data-entry-id="${esc(waitEntry.id)}">Leave waitlist</button>`
+                                : `<button type="button" class="btn btn-primary" data-action="waitlist" data-id="${esc(s.id)}" data-name="${esc(s.name)}">Join waitlist</button>`}
+                        ${s.available > 0 && waitEntry ? `<button type="button" class="btn btn-light" data-action="leave-waitlist" data-entry-id="${esc(waitEntry.id)}">Leave waitlist</button>` : ''}
                     </div>
                 </div>
             </li>`;
@@ -125,6 +133,7 @@ function updatePills() {
 /* ---------- map ---------- */
 
 function infoHtml(s) {
+    const waitEntry = WAITLIST_ENTRIES.find((entry) => Number(entry.stationId) === Number(s.id));
     return `
         <div class="iw">
             <h3>${esc(s.name)}</h3>
@@ -133,11 +142,15 @@ function infoHtml(s) {
                 <span class="badge ok">${s.available} available</span>
                 <span class="badge info">${s.returnSlots == null ? 'Availability unknown' : `${s.returnSlots} return slots`}</span>
             </div>
-            <p style="margin-top:8px">${esc(s.hours)}${s.price != null ? ` · EGP ${s.price}/hr` : ''}</p>
+            ${waitEntry ? `<p class="waitlist-info">${waitEntry.status === 'NOTIFIED' && s.available > 0 ? 'A PowerBank is available at this station. Reserve it now.' : `You are on the waiting list at position ${waitEntry.queuePosition ?? '—'}.`}</p>` : ''}
+            <p style="margin-top:8px">${esc(s.hours)}${s.price != null ? ` · ${PB.rateMoney(s.price)} / min` : ''}</p>
             <div class="row">
-                <button type="button" class="btn btn-primary" data-action="reserve"
-                        data-id="${esc(s.id)}" data-name="${esc(s.name)}"
-                        ${s.available === 0 ? 'disabled' : ''}>Reserve Now</button>
+                ${s.available > 0
+                    ? `<button type="button" class="btn btn-primary" data-action="reserve" data-id="${esc(s.id)}" data-name="${esc(s.name)}">Reserve Now</button>`
+                    : waitEntry
+                        ? `<button type="button" class="btn btn-light" data-action="leave-waitlist" data-entry-id="${esc(waitEntry.id)}">Leave waitlist</button>`
+                        : `<button type="button" class="btn btn-primary" data-action="waitlist" data-id="${esc(s.id)}" data-name="${esc(s.name)}">Join waitlist</button>`}
+                ${s.available > 0 && waitEntry ? `<button type="button" class="btn btn-light" data-action="leave-waitlist" data-entry-id="${esc(waitEntry.id)}">Leave waitlist</button>` : ''}
             </div>
         </div>`;
 }
@@ -236,6 +249,20 @@ function wireControls() {
 
     $('units-only').addEventListener('change', (e) => { state.unitsOnly = e.target.checked; renderList(); });
 
+    window.addEventListener('pb:waitlist-updated', (event) => {
+        WAITLIST_ENTRIES = WAITLIST_ENTRIES.filter((entry) => Number(entry.stationId) !== Number(event.detail.stationId));
+        WAITLIST_ENTRIES.push(event.detail);
+        renderList();
+        if (state.selectedId != null && markers.has(state.selectedId)) {
+            const station = withDistance().find((item) => Number(item.id) === Number(state.selectedId));
+            if (station) markers.get(state.selectedId).setPopupContent(infoHtml(station));
+        }
+    });
+
+    window.addEventListener('pb:station-availability-changed', (event) => {
+        refreshStationAvailability(Number(event.detail?.stationId));
+    });
+
     document.querySelectorAll('[data-mode]').forEach((btn) => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('[data-mode]').forEach((b) => b.classList.remove('is-dark'));
@@ -257,6 +284,13 @@ function wireControls() {
         const id = Number(btn.dataset.id);
         if (btn.dataset.action === 'view') selectStation(id, true);
         if (btn.dataset.action === 'reserve') PB.reserveStation(id, btn.dataset.name);
+        if (btn.dataset.action === 'waitlist') {
+            btn.disabled = true;
+            PB.joinWaitlist(id, btn.dataset.name).finally(() => {
+                if (btn.isConnected) btn.disabled = false;
+            });
+        }
+        if (btn.dataset.action === 'leave-waitlist') leaveWaitlist(Number(btn.dataset.entryId));
     });
 }
 
@@ -265,9 +299,80 @@ async function loadData() {
         STATIONS = await PB.loadStations();
     } catch (err) {
         STATIONS = (window.STATIONS_DATA || []).map((s) => ({
-            ...s, price: 8
+            ...s, price: 0.133333
         }));
         showBanner(`Backend not reachable (${err.message}). Showing sample data.`);
+    }
+}
+
+async function loadWaitlist() {
+    if (!PB.api.hasToken()) { WAITLIST_ENTRIES = []; return; }
+    try { WAITLIST_ENTRIES = await PB.api.waitlist.mine(); }
+    catch (_) { WAITLIST_ENTRIES = []; }
+}
+
+async function refreshWaitlist() {
+    if (!PB.api.hasToken()) return;
+    try {
+        const previous = WAITLIST_ENTRIES;
+        const updated = await PB.api.waitlist.mine();
+        const stationIds = new Set([...previous, ...updated].map((entry) => Number(entry.stationId)));
+        const availability = await Promise.all([...stationIds].map(async (id) => {
+            try { return [id, await PB.api.stations.availability(id)]; }
+            catch (_) { return [id, null]; }
+        }));
+        WAITLIST_ENTRIES = updated;
+        availability.forEach(([id, data]) => {
+            const station = STATIONS.find((item) => Number(item.id) === id);
+            if (!station || !data) return;
+            station.available = Number(data.available);
+            station.returnSlots = Number(data.returnSlotsLeft);
+            const marker = markers.get(station.id);
+            if (marker) {
+                marker.setStyle({ fillColor: stationColor(station) });
+                marker.setTooltipContent(String(station.available));
+                marker.setPopupContent(infoHtml({ ...station, distance: distanceKm(origin(), station) }));
+            }
+        });
+        updatePills();
+        renderList();
+    } catch (_) { /* Keep the last known queue visible during a temporary outage. */ }
+}
+
+async function refreshStationAvailability(stationId) {
+    if (!Number.isFinite(stationId)) return;
+    try {
+        const availability = await PB.api.stations.availability(stationId);
+        const station = STATIONS.find((item) => Number(item.id) === stationId);
+        if (!station) return;
+        station.available = Number(availability.available);
+        station.returnSlots = Number(availability.returnSlotsLeft);
+        const marker = markers.get(station.id);
+        if (marker) {
+            marker.setStyle({ fillColor: stationColor(station) });
+            marker.setTooltipContent(String(station.available));
+            marker.setPopupContent(infoHtml({ ...station, distance: distanceKm(origin(), station) }));
+        }
+        updatePills();
+        renderList();
+    } catch (_) { /* The current station snapshot remains visible if the refresh fails. */ }
+}
+
+async function leaveWaitlist(entryId) {
+    const button = document.querySelector(`[data-action="leave-waitlist"][data-entry-id="${CSS.escape(String(entryId))}"]`);
+    if (button) button.disabled = true;
+    try {
+        await PB.api.waitlist.leave(entryId);
+        WAITLIST_ENTRIES = WAITLIST_ENTRIES.filter((entry) => Number(entry.id) !== entryId);
+        renderList();
+        if (state.selectedId != null && markers.has(state.selectedId)) {
+            const station = withDistance().find((item) => Number(item.id) === Number(state.selectedId));
+            if (station) markers.get(state.selectedId).setPopupContent(infoHtml(station));
+        }
+        PB.toast('You left the station waiting list.');
+    } catch (error) {
+        PB.toast(error.message, true);
+        if (button) button.disabled = false;
     }
 }
 
@@ -275,11 +380,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     PB.updateSignInLink();
     updateMapAccount();
     await loadData();
+    await loadWaitlist();
     updatePills();
     renderList();
     wireControls();
 
     initMap();
+    if (PB.api.hasToken()) setInterval(refreshWaitlist, 20000);
 });
 
 async function updateMapAccount() {

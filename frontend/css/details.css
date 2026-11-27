@@ -218,6 +218,30 @@ body.details-page {
     font: inherit;
 }
 
+.waitlist-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border: 1px solid color-mix(in srgb, #1f6feb 20%, var(--color-surface));
+}
+
+.waitlist-panel[hidden] {
+    display: none;
+}
+
+.waitlist-panel p {
+    margin: 6px 0 0;
+    color: var(--color-muted);
+}
+
+@media (max-width: 640px) {
+    .waitlist-panel {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
+
 .btn-primary,
 .btn-secondary {
     height: 44px;

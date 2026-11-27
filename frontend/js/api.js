@@ -123,6 +123,11 @@ PB.api = (function () {
             get: (id) => request('GET', `/reservations/${id}`),
             cancel: (id) => request('DELETE', `/reservations/${id}`)
         },
+        waitlist: {
+            mine: () => request('GET', '/waitlist'),
+            join: (stationId) => request('POST', '/waitlist', { stationId }),
+            leave: (id) => request('DELETE', `/waitlist/${id}`)
+        },
         rentals: {
             start: (reservationId) => request('POST', '/rentals/start', { reservationId }),
             active: () => request('GET', '/rentals/active'),

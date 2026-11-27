@@ -12,6 +12,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\Rent
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\ReservationController.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\ReturnController.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\StationController.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\controller\WaitingListController.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\ds\StationRanking.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\ActionResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\AddPowerBanksRequest.java
@@ -24,6 +25,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\CreateRetur
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\CustomerProfileResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\IdentifierRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\ImageResponse.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\JoinWaitlistRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\LoginRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\PricingResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\PricingUpsertRequest.java
@@ -39,6 +41,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\StationUpse
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\UpdateProfileRequest.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\UserSummary.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\VerificationRequest.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\dto\WaitingListResponse.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\AccountStatus.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\AuditLog.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\AuthToken.java
@@ -60,6 +63,8 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\ReviewDe
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\Station.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\StationStatus.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\UserAccount.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\WaitingListEntry.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\entity\WaitingListStatus.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\exception\ApiException.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\exception\GlobalExceptionHandler.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\PowerBankApplication.java
@@ -76,6 +81,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\Rent
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\ReservationRepository.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\StationRepository.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\UserAccountRepository.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\repository\WaitingListRepository.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\security\CurrentUser.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\security\JwtAuthFilter.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\security\JwtService.java
@@ -88,6 +94,7 @@ G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\Reserva
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\ReturnImageService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\ReturnService.java
 G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\StationService.java
+G:\project\PowerBankStations\backend\src\main\java\com\powerbank\service\WaitingListService.java
 G:\project\PowerBankStations\backend\src\main\java\powerbank\bst\PowerBankBST.java
 G:\project\PowerBankStations\backend\src\main\java\powerbank\bst\TreeNode.java
 G:\project\PowerBankStations\backend\src\main\java\powerbank\linkedlist\ListNode.java

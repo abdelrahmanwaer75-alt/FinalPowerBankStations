@@ -7,6 +7,7 @@ import com.powerbank.entity.*;
 import com.powerbank.exception.ApiException;
 import com.powerbank.repository.PowerBankRepository;
 import com.powerbank.repository.StationRepository;
+import com.powerbank.service.WaitingListService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +21,13 @@ public class AdminStationService {
 
     private final StationRepository stations;
     private final PowerBankRepository powerBanks;
+    private final WaitingListService waitingList;
 
-    public AdminStationService(StationRepository stations, PowerBankRepository powerBanks) {
+    public AdminStationService(StationRepository stations, PowerBankRepository powerBanks,
+                               WaitingListService waitingList) {
         this.stations = stations;
         this.powerBanks = powerBanks;
+        this.waitingList = waitingList;
     }
 
     @Transactional(readOnly = true)
@@ -56,6 +60,10 @@ public class AdminStationService {
                 req.latitude(), req.longitude(), req.totalCapacity(),
                 req.openingHours(), req.contactPhone(), req.description());
         s.setStatus(parseStatus(req.status()));
+        if (s.getStatus() == StationStatus.ACTIVE) {
+            waitingList.promoteForAvailableStock(id,
+                    (int) powerBanks.countByStationIdAndStatus(id, PowerBankStatus.AVAILABLE));
+        }
         return toResponse(s, powerBanks.countByStationIdAndStatus(id, PowerBankStatus.AVAILABLE));
     }
 
@@ -69,6 +77,7 @@ public class AdminStationService {
             bank.setStation(s);
             powerBanks.save(bank);
         }
+        waitingList.promoteForAvailableStock(stationId, req.count());
         return toResponse(s, powerBanks.countByStationIdAndStatus(stationId, PowerBankStatus.AVAILABLE));
     }
 

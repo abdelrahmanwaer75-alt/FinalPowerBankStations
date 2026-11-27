@@ -36,7 +36,8 @@ async function load() {
         const [active, holds, st, p] = await Promise.all([
             PB.api.rentals.active(),
             PB.api.reservations.active(),
-            stations.length ? Promise.resolve(stations) : PB.loadStations(),
+            // Inventory/pricing are supporting widgets. A failed optional request must not hide a saved hold.
+            stations.length ? Promise.resolve(stations) : PB.loadStations().catch(() => []),
             pricing ? Promise.resolve(pricing) : PB.api.pricing.active().catch(() => null)
         ]);
         stations = st;

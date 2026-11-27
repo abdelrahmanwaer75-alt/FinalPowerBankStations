@@ -4,6 +4,7 @@ import com.powerbank.dto.AdminReturnRow;
 import com.powerbank.entity.*;
 import com.powerbank.exception.ApiException;
 import com.powerbank.repository.*;
+import com.powerbank.service.WaitingListService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +24,14 @@ public class ReturnReviewService {
     private final RentalReturnRepository returns;
     private final ManualReviewRepository reviews;
     private final InspectionImageRepository images;
+    private final WaitingListService waitingList;
 
     public ReturnReviewService(RentalReturnRepository returns, ManualReviewRepository reviews,
-                               InspectionImageRepository images) {
+                               InspectionImageRepository images, WaitingListService waitingList) {
         this.returns = returns;
         this.reviews = reviews;
         this.images = images;
+        this.waitingList = waitingList;
     }
 
     @Transactional(readOnly = true)
@@ -42,6 +45,7 @@ public class ReturnReviewService {
         ret.setStatus(ReturnStatus.APPROVED);
         PowerBank bank = ret.getRental().getPowerBank();
         bank.setStatus(PowerBankStatus.AVAILABLE);
+        if (bank.getStation() != null) waitingList.promoteForAvailableStock(bank.getStation().getId(), 1);
         reviews.save(new ManualReview(ret, reviewerId, ReviewDecision.APPROVED, notes));
     }
 

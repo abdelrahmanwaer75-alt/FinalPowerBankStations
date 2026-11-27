@@ -7,6 +7,9 @@ const stationId = Number(params.get('id'));
 
 let current = null;
 let plan = null;
+let currentAvailability = null;
+let waitlistEntry = null;
+let waitlistTimer = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     PB.updateSignInLink();
@@ -20,6 +23,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('reserve-btn').addEventListener('click', () => {
         if (current) PB.reserveStation(current.id, current.name, Number(document.getElementById('duration').value));
     });
+    document.getElementById('waitlist-btn').addEventListener('click', () => {
+        if (!current) return;
+        const button = document.getElementById('waitlist-btn');
+        button.disabled = true;
+        PB.joinWaitlist(current.id, current.name).finally(() => { button.disabled = false; });
+    });
+    document.getElementById('waitlist-leave').addEventListener('click', leaveWaitlist);
+    window.addEventListener('pb:waitlist-updated', (event) => {
+        if (Number(event.detail.stationId) !== stationId) return;
+        waitlistEntry = event.detail;
+        renderWaitlistPanel();
+    });
+    window.addEventListener('pb:station-availability-changed', (event) => {
+        if (Number(event.detail?.stationId) === stationId) refreshWaitlist();
+    });
 
     try {
         const [station, availability, pricing] = await Promise.all([
@@ -29,7 +47,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         ]);
         current = station;
         plan = pricing;
+        if (PB.api.hasToken()) {
+            const entries = await PB.api.waitlist.mine().catch(() => []);
+            waitlistEntry = entries.find((entry) => Number(entry.stationId) === stationId) || null;
+        }
         render(station, availability);
+        if (PB.api.hasToken()) waitlistTimer = setInterval(refreshWaitlist, 20000);
     } catch (err) {
         showBanner(err.message);
         setText('station-name', 'Station not available');
@@ -37,37 +60,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function render(s, a) {
-    const open = s.status === 'ACTIVE';
-    const hasUnits = a.available > 0;
-
     document.title = `${s.name} | PowerBank Stations`;
     setText('crumb-name', s.name);
     setText('station-name', s.name);
     setText('station-address', `${s.address}, ${s.city}`);
     setText('station-meta', s.description || '');
 
-    document.getElementById('chips').innerHTML = [
-        `<span class="chip">Station #${s.id}</span>`,
-        open ? '<span class="chip ok">Open</span>' : '<span class="chip bad">Closed</span>',
-        hasUnits ? '' : '<span class="chip warn">No units available</span>'
-    ].join('');
-
-    setText('stat-available', a.available);
-    setText('stat-available-note', hasUnits ? 'Ready to rent' : 'Empty');
+    renderAvailability(s, a);
     setText('stat-slots', a.returnSlotsLeft);
     setText('stat-capacity', a.totalCapacity);
     setText('stat-capacity-note', `${a.rented} rented right now`);
-
-    // Slot matrix: one cell per docking slot, filled for each available device.
-    const bays = document.getElementById('bays');
-    bays.innerHTML = Array.from({ length: a.totalCapacity }, (_, i) => {
-        const on = i < a.available;
-        return `<div class="bay ${on ? 'on' : 'off'}">${i + 1}</div>`;
-    }).join('');
-
-    const reserve = document.getElementById('reserve-btn');
-    reserve.disabled = !open || !hasUnits;
-    reserve.textContent = !open ? 'Station closed' : hasUnits ? 'Reserve a PowerBank' : 'No units available';
 
     const directions = document.getElementById('directions');
     directions.href = `https://www.openstreetmap.org/?mlat=${encodeURIComponent(s.latitude)}&mlon=${encodeURIComponent(s.longitude)}#map=17/${encodeURIComponent(s.latitude)}/${encodeURIComponent(s.longitude)}`;
@@ -84,8 +86,77 @@ function render(s, a) {
 
     setText('hours', s.openingHours || '—');
     setText('contact', s.contactPhone || '—');
+    renderWaitlistPanel();
 
     loadMap(s);
+}
+
+function renderAvailability(station, availability) {
+    currentAvailability = availability;
+    const open = station.status === 'ACTIVE';
+    const hasUnits = Number(availability.available) > 0;
+    document.getElementById('chips').innerHTML = [
+        `<span class="chip">Station #${station.id}</span>`,
+        open ? '<span class="chip ok">Open</span>' : '<span class="chip bad">Closed</span>',
+        hasUnits ? '' : '<span class="chip warn">No units available</span>'
+    ].join('');
+    setText('stat-available', availability.available);
+    setText('stat-available-note', hasUnits ? 'Ready to rent' : 'Empty');
+    const bays = document.getElementById('bays');
+    bays.innerHTML = Array.from({ length: availability.totalCapacity }, (_, i) => {
+        const on = i < availability.available;
+        return `<div class="bay ${on ? 'on' : 'off'}">${i + 1}</div>`;
+    }).join('');
+    const reserve = document.getElementById('reserve-btn');
+    reserve.disabled = !open || !hasUnits;
+    reserve.textContent = !open ? 'Station closed' : hasUnits ? 'Reserve a PowerBank' : 'No units available';
+    const waitlist = document.getElementById('waitlist-btn');
+    waitlist.hidden = !open || hasUnits || !!waitlistEntry;
+}
+
+function renderWaitlistPanel() {
+    const panel = document.getElementById('waitlist-panel');
+    const copy = document.getElementById('waitlist-copy');
+    if (!panel || !copy) return;
+    panel.hidden = !waitlistEntry;
+    if (!waitlistEntry) return;
+    copy.textContent = waitlistEntry.status === 'NOTIFIED' && Number(currentAvailability?.available) > 0
+        ? 'A PowerBank was released at this station. Check the live availability above and reserve it while it is available.'
+        : `You are in the waiting list${waitlistEntry.queuePosition ? ` at position ${waitlistEntry.queuePosition}` : ''}. We will update this page when stock is released.`;
+    if (current) document.getElementById('waitlist-btn').hidden = true;
+}
+
+async function refreshWaitlist() {
+    if (!PB.api.hasToken()) return;
+    try {
+        const [entries, availability] = await Promise.all([
+            PB.api.waitlist.mine(),
+            PB.api.stations.availability(stationId)
+        ]);
+        waitlistEntry = entries.find((entry) => Number(entry.stationId) === stationId) || null;
+        if (current) renderAvailability(current, availability);
+        renderWaitlistPanel();
+    } catch (_) { /* Keep the current waitlist state visible during a temporary outage. */ }
+}
+
+async function leaveWaitlist() {
+    if (!waitlistEntry) return;
+    const button = document.getElementById('waitlist-leave');
+    button.disabled = true;
+    try {
+        await PB.api.waitlist.leave(waitlistEntry.id);
+        waitlistEntry = null;
+        renderWaitlistPanel();
+        if (current) {
+            const availability = await PB.api.stations.availability(stationId);
+            renderAvailability(current, availability);
+        }
+        PB.toast('You left the station waiting list.');
+    } catch (error) {
+        showBanner(error.message);
+    } finally {
+        button.disabled = false;
+    }
 }
 
 function loadMap(s) {

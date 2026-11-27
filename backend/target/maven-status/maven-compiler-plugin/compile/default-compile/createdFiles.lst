@@ -7,6 +7,7 @@ com\powerbank\entity\ManualReview.class
 com\powerbank\dto\ChangePasswordRequest.class
 com\powerbank\service\PricingCalculator.class
 com\powerbank\repository\ManualReviewRepository.class
+com\powerbank\dto\JoinWaitlistRequest.class
 powerbank\models\PowerBank.class
 powerbank\models\RentalRecord.class
 com\powerbank\security\JwtAuthFilter.class
@@ -36,6 +37,7 @@ com\powerbank\entity\AuditLog$AuditResult.class
 com\powerbank\repository\ReservationRepository.class
 com\powerbank\repository\RentalPricingSnapshotRepository.class
 powerbank\services\PowerBankService$ActiveRental.class
+com\powerbank\dto\WaitingListResponse.class
 com\powerbank\controller\AuthController.class
 powerbank\linkedlist\ListNode.class
 com\powerbank\dto\PricingResponse.class
@@ -46,6 +48,7 @@ com\powerbank\admin\PricingAdminService.class
 com\powerbank\entity\AuthToken.class
 com\powerbank\entity\RentalReturn.class
 com\powerbank\service\RentalService.class
+com\powerbank\service\WaitingListService.class
 com\powerbank\entity\PricingPlan.class
 com\powerbank\dto\ActionResponse.class
 com\powerbank\controller\ReturnController.class
@@ -68,8 +71,10 @@ com\powerbank\controller\AdminController.class
 com\powerbank\repository\UserAccountRepository.class
 com\powerbank\entity\ReservationStatus.class
 com\powerbank\repository\AdminRoleRepository.class
+com\powerbank\repository\WaitingListRepository.class
 com\powerbank\config\SecurityConfig.class
 com\powerbank\entity\PowerBank.class
+com\powerbank\entity\WaitingListEntry.class
 powerbank\models\StatusHistory.class
 com\powerbank\entity\ReturnStatus.class
 com\powerbank\entity\Rental.class
@@ -91,12 +96,14 @@ powerbank\models\Station.class
 com\powerbank\controller\RentalController.class
 com\powerbank\repository\StationRepository.class
 com\powerbank\dto\IdentifierRequest.class
+com\powerbank\controller\WaitingListController.class
 com\powerbank\dto\AuthResponse.class
 com\powerbank\dto\ReservationResponse.class
 com\powerbank\entity\AuthTokenPurpose.class
 com\powerbank\dto\StartRentalRequest.class
 com\powerbank\controller\StationController.class
 com\powerbank\dto\CreateReturnRequest.class
+com\powerbank\entity\WaitingListStatus.class
 com\powerbank\repository\AuditLogRepository.class
 com\powerbank\repository\RentalReturnRepository.class
 com\powerbank\security\CurrentUser.class

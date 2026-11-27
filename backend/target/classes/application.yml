@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   datasource:
@@ -33,7 +33,7 @@ app:
     secret: ${JWT_SECRET}
     ttl-minutes: 480
   cors:
-    allowed-origins: http://localhost:3000,http://127.0.0.1:3000
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
   uploads:
     dir: ${UPLOAD_DIR:./uploads}
   mail:
