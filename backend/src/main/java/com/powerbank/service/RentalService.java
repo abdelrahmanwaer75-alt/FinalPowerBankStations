@@ -4,6 +4,10 @@ import com.powerbank.dto.RentalResponse;
 import com.powerbank.entity.*;
 import com.powerbank.exception.ApiException;
 import com.powerbank.repository.*;
+import datastructure.linkedlist.ActiveRentalList;
+import datastructure.linkedlist.RentalHistoryList;
+import datastructure.models.RentalRecord;
+import datastructure.sorting.Sorting;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,16 +71,51 @@ public class RentalService {
 
     @Transactional(readOnly = true)
     public List<RentalResponse> active(long userId) {
-        return rentals.findByUserIdAndStatusOrderByStartTimeDesc(userId, RentalStatus.ACTIVE).stream()
+        List<Rental> rows = rentals.findByUserIdAndStatusOrderByStartTimeDesc(userId, RentalStatus.ACTIVE);
+        java.util.Map<Long, Rental> byId = new java.util.HashMap<>();
+        ActiveRentalList active = new ActiveRentalList();
+        for (Rental row : rows) {
+            byId.put(row.getId(), row);
+            active.insert(toDataStructureRecord(row));
+        }
+        return java.util.Arrays.stream(active.toArray())
+                .map(record -> byId.get(record.getId()))
+                .filter(java.util.Objects::nonNull)
                 .map(r -> toResponse(r, snapshotFor(r)))
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<RentalResponse> history(long userId) {
-        return rentals.findByUserIdOrderByStartTimeDesc(userId).stream()
+        List<Rental> rows = rentals.findByUserIdOrderByStartTimeDesc(userId);
+        java.util.Map<Long, Rental> byId = new java.util.HashMap<>();
+        ActiveRentalList active = new ActiveRentalList();
+        RentalHistoryList completed = new RentalHistoryList();
+        for (Rental row : rows) {
+            byId.put(row.getId(), row);
+            RentalRecord record = toDataStructureRecord(row);
+            if (row.getStatus() == RentalStatus.ACTIVE) active.insert(record);
+            else completed.insert(record);
+        }
+        java.util.List<RentalRecord> ordered = new java.util.ArrayList<>();
+        ordered.addAll(java.util.Arrays.asList(active.toArray()));
+        ordered.addAll(java.util.Arrays.asList(completed.toArray()));
+        RentalRecord[] chronological = ordered.toArray(RentalRecord[]::new);
+        Sorting.sortRentalsByDate(chronological);
+        ordered.clear();
+        for (int i = chronological.length - 1; i >= 0; i--) ordered.add(chronological[i]);
+        return ordered.stream().map(record -> byId.get(record.getId()))
+                .filter(java.util.Objects::nonNull)
                 .map(r -> toResponse(r, snapshotFor(r)))
                 .toList();
+    }
+
+    private RentalRecord toDataStructureRecord(Rental rental) {
+        return new RentalRecord(rental.getId(), rental.getUser().getId(), rental.getPowerBank().getId(),
+                rental.getPickupStation().getId(), 0,
+                rental.getStartTime() == null ? null : rental.getStartTime().toString(),
+                rental.getEndTime() == null ? null : rental.getEndTime().toString(),
+                rental.getFinalCost() == null ? 0 : rental.getFinalCost().doubleValue());
     }
 
     @Transactional(readOnly = true)

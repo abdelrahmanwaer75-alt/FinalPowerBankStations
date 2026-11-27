@@ -4,6 +4,8 @@ import com.powerbank.dto.ReservationResponse;
 import com.powerbank.entity.*;
 import com.powerbank.exception.ApiException;
 import com.powerbank.repository.*;
+import datastructure.bst.PowerBankBST;
+import datastructure.queue.ReservationQueue;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -52,9 +54,20 @@ public class ReservationService {
                 .orElseThrow(() -> conflict("STATION_UNAVAILABLE", "This station is not operating right now"));
 
         // The row is locked here, so two customers cannot take the same device.
-        PowerBank bank = powerBanks
-                .findFirstByStationIdAndStatusOrderBySerialNumberAsc(stationId, PowerBankStatus.AVAILABLE)
-                .orElseThrow(() -> conflict("NO_POWER_BANK_AVAILABLE", "No PowerBank is available at this station"));
+        List<PowerBank> availableBanks = powerBanks
+                .findByStationIdAndStatusOrderByIdAsc(stationId, PowerBankStatus.AVAILABLE);
+        PowerBankBST inventory = new PowerBankBST();
+        for (PowerBank candidate : availableBanks) {
+            inventory.insert(new datastructure.models.PowerBank(candidate.getId(),
+                    candidate.getStatus().name(), candidate.getStation().getId()));
+        }
+        datastructure.models.PowerBank selected = inventory.findAvailable(stationId);
+        PowerBank bank = selected == null ? null : availableBanks.stream()
+                .filter(candidate -> candidate.getId().equals(selected.getId()))
+                .findFirst().orElse(null);
+        if (bank == null) {
+            throw conflict("NO_POWER_BANK_AVAILABLE", "No PowerBank is available at this station");
+        }
 
         bank.setStatus(PowerBankStatus.RESERVED);
 
@@ -70,8 +83,21 @@ public class ReservationService {
     /** The customer's current hold, if any. Expired holds are released first. */
     public java.util.List<ReservationResponse> activeHolds(long userId) {
         expireDueFor(userId);
-        return reservations.findByUserIdAndStatusIn(userId, java.util.List.of(ReservationStatus.PENDING))
-                .stream().map(this::toResponse).toList();
+        List<Reservation> holds = reservations.findByUserIdAndStatusIn(userId,
+                java.util.List.of(ReservationStatus.PENDING));
+        java.util.Map<Long, Reservation> byId = new java.util.HashMap<>();
+        ReservationQueue queue = new ReservationQueue();
+        for (Reservation hold : holds) {
+            byId.put(hold.getId(), hold);
+            queue.enqueue(new datastructure.models.Reservation(hold.getId(), userId,
+                    hold.getStation().getId(), hold.getPowerBank() == null ? -1 : hold.getPowerBank().getId(),
+                    hold.getCreatedAt() == null ? "" : hold.getCreatedAt().toString(), hold.getStatus().name()));
+        }
+        return java.util.Arrays.stream(queue.toArray())
+                .map(item -> byId.get(item.getId()))
+                .filter(java.util.Objects::nonNull)
+                .map(this::toResponse)
+                .toList();
     }
 
     public ReservationResponse get(long userId, long id) {

@@ -20,6 +20,10 @@ public interface PowerBankRepository extends JpaRepository<PowerBank, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<PowerBank> findFirstByStationIdAndStatusOrderBySerialNumberAsc(Long stationId, PowerBankStatus status);
 
+    /** Locks available rows before the inventory BST selects a unit. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<PowerBank> findByStationIdAndStatusOrderByIdAsc(Long stationId, PowerBankStatus status);
+
     @Query("select p.station.id, count(p) from PowerBank p where p.status = :status group by p.station.id")
     List<Object[]> countAvailableGroupedByStation(@Param("status") PowerBankStatus status);
 

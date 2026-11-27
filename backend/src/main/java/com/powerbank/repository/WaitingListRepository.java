@@ -12,6 +12,7 @@ public interface WaitingListRepository extends JpaRepository<WaitingListEntry, L
     Optional<WaitingListEntry> findByUserIdAndStationId(Long userId, Long stationId);
     List<WaitingListEntry> findByUserIdOrderByCreatedAtDesc(Long userId);
     List<WaitingListEntry> findByStationIdAndStatusOrderByCreatedAtAsc(Long stationId, WaitingListStatus status);
+    List<WaitingListEntry> findByStatusOrderByCreatedAtAsc(WaitingListStatus status);
     List<WaitingListEntry> findByStationIdAndStatusInOrderByCreatedAtAsc(
             Long stationId, Collection<WaitingListStatus> statuses);
 }

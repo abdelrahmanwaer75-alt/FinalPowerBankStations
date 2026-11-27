@@ -4,6 +4,9 @@ import com.powerbank.dto.WaitingListResponse;
 import com.powerbank.entity.*;
 import com.powerbank.exception.ApiException;
 import com.powerbank.repository.*;
+import datastructure.bst.PowerBankBST;
+import datastructure.models.WaitingRequest;
+import datastructure.queue.GlobalWaitingQueue;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,15 +85,40 @@ public class WaitingListService {
     public void promoteForAvailableStock(long stationId, int newUnits) {
         if (newUnits <= 0) return;
         if (stations.findById(stationId).filter(s -> s.getStatus() == StationStatus.ACTIVE).isEmpty()) return;
-        long available = powerBanks.countByStationIdAndStatus(stationId, PowerBankStatus.AVAILABLE);
         List<WaitingListEntry> notified = entries
                 .findByStationIdAndStatusOrderByCreatedAtAsc(stationId, WaitingListStatus.NOTIFIED);
-        int unnotifiedSlots = Math.max(0, (int) Math.min(Integer.MAX_VALUE, available) - notified.size());
+        List<com.powerbank.entity.PowerBank> available = powerBanks
+                .findByStationIdAndStatusOrderByIdAsc(stationId, PowerBankStatus.AVAILABLE);
+        int unnotifiedSlots = Math.max(0, available.size() - notified.size());
         int promotionLimit = Math.min(unnotifiedSlots, newUnits);
-        List<WaitingListEntry> waiting = entries
-                .findByStationIdAndStatusOrderByCreatedAtAsc(stationId, WaitingListStatus.WAITING);
-        for (int i = 0; i < Math.min(promotionLimit, waiting.size()); i++) {
-            waiting.get(i).setStatus(WaitingListStatus.NOTIFIED);
+        if (promotionLimit == 0) return;
+
+        // Build the single project-wide FIFO queue, then scan it for the oldest request
+        // eligible for each available device at this station.
+        GlobalWaitingQueue queue = new GlobalWaitingQueue();
+        java.util.Map<Long, WaitingListEntry> entriesById = new java.util.HashMap<>();
+        for (WaitingListEntry entry : entries.findByStatusOrderByCreatedAtAsc(WaitingListStatus.WAITING)) {
+            long id = entry.getId();
+            queue.enqueue(new WaitingRequest(id, entry.getUser().getId(), entry.getStation().getId(),
+                    entry.getCreatedAt().toString(), WaitingListStatus.WAITING.name()));
+            entriesById.put(id, entry);
+        }
+
+        PowerBankBST inventory = new PowerBankBST();
+        for (com.powerbank.entity.PowerBank bank : available) {
+            inventory.insert(new datastructure.models.PowerBank(bank.getId(), bank.getStatus().name(), stationId));
+        }
+        int promoted = 0;
+        for (datastructure.models.PowerBank bank : inventory.inOrderTraversal()) {
+            if (promoted >= promotionLimit) break;
+            WaitingRequest next = queue.findNextEligible(bank);
+            if (next != null && queue.removeRequest(next.getRequestId())) {
+                WaitingListEntry entry = entriesById.get(next.getRequestId());
+                if (entry != null) {
+                    entry.setStatus(WaitingListStatus.NOTIFIED);
+                    promoted++;
+                }
+            }
         }
     }
 

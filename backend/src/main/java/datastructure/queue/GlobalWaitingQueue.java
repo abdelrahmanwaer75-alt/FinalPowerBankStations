@@ -67,6 +67,22 @@ public class GlobalWaitingQueue {
         return false;
     }
 
+    /** Removes a selected request while preserving its persisted status for the caller to update. */
+    public boolean removeRequest(long requestId) {
+        QueueNode previous = null;
+        QueueNode current = front;
+        while (current != null) {
+            WaitingRequest request = (WaitingRequest) current.data;
+            if (request.getRequestId() == requestId) {
+                unlink(previous, current);
+                return true;
+            }
+            previous = current;
+            current = current.next;
+        }
+        return false;
+    }
+
     /** Returns the oldest still-waiting customer whose preferred station matches this unit. */
     public WaitingRequest findNextEligible(PowerBank bank) {
         if (bank == null || !"AVAILABLE".equals(bank.getStatus())) return null;

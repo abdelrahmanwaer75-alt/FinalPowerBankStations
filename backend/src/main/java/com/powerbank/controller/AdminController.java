@@ -5,6 +5,7 @@ import com.powerbank.admin.AdminAccountService;
 import com.powerbank.admin.AdminStationService;
 import com.powerbank.admin.AuditService;
 import com.powerbank.admin.PricingAdminService;
+import com.powerbank.admin.PowerBankStatusHistoryService;
 import com.powerbank.admin.ReturnReviewService;
 import com.powerbank.dto.*;
 import com.powerbank.entity.ReturnStatus;
@@ -28,15 +29,18 @@ public class AdminController {
     private final PricingAdminService pricing;
     private final AuditService audit;
     private final AdminAccountService adminAccounts;
+    private final PowerBankStatusHistoryService statusHistory;
 
     public AdminController(AdminAccess access, ReturnReviewService reviews, AdminStationService stations,
-                           PricingAdminService pricing, AuditService audit, AdminAccountService adminAccounts) {
+                           PricingAdminService pricing, AuditService audit, AdminAccountService adminAccounts,
+                           PowerBankStatusHistoryService statusHistory) {
         this.access = access;
         this.reviews = reviews;
         this.stations = stations;
         this.pricing = pricing;
         this.audit = audit;
         this.adminAccounts = adminAccounts;
+        this.statusHistory = statusHistory;
     }
 
     private long staff(Authentication auth) {
@@ -152,6 +156,13 @@ public class AdminController {
         StationResponse updated = stations.addPowerBanks(id, req);
         audit.success(actor, "POWERBANKS_ADDED", "station", id, "{\"count\":" + req.count() + "}");
         return updated;
+    }
+
+    @GetMapping("/powerbank-status-history")
+    List<PowerBankStatusEventResponse> powerBankStatusHistory(Authentication auth,
+            @RequestParam(required = false) Long powerBankId) {
+        staff(auth);
+        return statusHistory.list(powerBankId);
     }
 
     /* ---- pricing ---- */

@@ -42,6 +42,14 @@ public class StatusHistoryList {
 
     public int count() { return size; }
 
+    public StatusHistory[] toArray() {
+        StatusHistory[] result = new StatusHistory[size];
+        int index = 0;
+        for (ListNode node = head; node != null; node = node.next)
+            result[index++] = (StatusHistory) node.data;
+        return result;
+    }
+
     public void display() {
         if (head == null) { System.out.println("No status history found."); return; }
         ListNode current = head;
