@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 import powerbank.bst.PowerBankBST;
 import powerbank.linkedlist.RentalHistoryList;
+import powerbank.linkedlist.ActiveRentalList;
 import powerbank.linkedlist.StatusHistoryList;
 import powerbank.models.PowerBank;
 import powerbank.models.RentalRecord;
@@ -13,37 +14,30 @@ import powerbank.models.Reservation;
 import powerbank.models.Station;
 import powerbank.models.StatusHistory;
 import powerbank.queue.ReservationQueue;
+import powerbank.queue.GlobalWaitingQueue;
 import powerbank.sorting.Sorting;
 
 public class PowerBankService {
     private final PowerBankBST powerBanks = new PowerBankBST();
     private final ReservationQueue reservations = new ReservationQueue();
+    private final GlobalWaitingQueue waitingRequests = new GlobalWaitingQueue();
     private final RentalHistoryList rentalHistory = new RentalHistoryList();
+    private final ActiveRentalList activeRentals = new ActiveRentalList();
     private final StatusHistoryList statusHistory = new StatusHistoryList();
 
     private Station[] stations = new Station[10];
     private int stationCount;
-    private ActiveRental[] activeRentals = new ActiveRental[10];
-    private int activeRentalCount;
     private int nextReservationId = 1;
     private int nextRentalId = 1;
+    private int nextWaitingRequestId = 1;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    private static class ActiveRental {
-        int customerId;
-        int powerBankId;
-        int startStationId;
-        LocalDateTime startTime;
-
-        ActiveRental(int customerId, int powerBankId, int stationId, LocalDateTime startTime) {
-            this.customerId = customerId;
-            this.powerBankId = powerBankId;
-            this.startStationId = stationId;
-            this.startTime = startTime;
-        }
+    public PowerBankService() {
+        this(true);
     }
 
-    public PowerBankService() {
+    public PowerBankService(boolean seedDemoData) {
+        if (!seedDemoData) return;
         addStation(new Station(1, "Main Gate", 0, 0, true, 0.166667));
         addStation(new Station(2, "Library", 0, 0, true, 0.200000));
         addStation(new Station(3, "Food Court", 0, 0, true, 0.133333));
@@ -58,7 +52,9 @@ public class PowerBankService {
 
     public PowerBankBST getPowerBanks() { return powerBanks; }
     public ReservationQueue getReservations() { return reservations; }
+    public GlobalWaitingQueue getWaitingRequests() { return waitingRequests; }
     public RentalHistoryList getRentalHistory() { return rentalHistory; }
+    public ActiveRentalList getActiveRentals() { return activeRentals; }
     public StatusHistoryList getStatusHistory() { return statusHistory; }
 
     public boolean addStation(Station station) {
@@ -70,13 +66,13 @@ public class PowerBankService {
         return true;
     }
 
-    public Station findStation(int id) {
+    public Station findStation(long id) {
         for (int i = 0; i < stationCount; i++)
             if (stations[i].getId() == id) return stations[i];
         return null;
     }
 
-    public boolean updateStation(int id, String name, double price) {
+    public boolean updateStation(long id, String name, double price) {
         Station station = findStation(id);
         if (station == null || name == null || name.trim().isEmpty() || price < 0) return false;
         station.setName(name);
@@ -84,7 +80,7 @@ public class PowerBankService {
         return true;
     }
 
-    public boolean deactivateStation(int id) {
+    public boolean deactivateStation(long id) {
         Station station = findStation(id);
         if (station == null) return false;
         station.setActive(false);
@@ -103,7 +99,7 @@ public class PowerBankService {
         return result;
     }
 
-    public boolean addPowerBank(int id, int stationId) {
+    public boolean addPowerBank(long id, long stationId) {
         Station station = findStation(stationId);
         if (id <= 0 || station == null || !station.isActive() || powerBanks.search(id) != null) return false;
         powerBanks.insert(new PowerBank(id, "AVAILABLE", stationId));
@@ -112,11 +108,23 @@ public class PowerBankService {
         return true;
     }
 
-    public PowerBank searchPowerBank(int id) {
+    public PowerBank searchPowerBank(long id) {
         return powerBanks.search(id);
     }
 
-    public boolean updatePowerBankStatus(int id, String newStatus) {
+    public boolean deletePowerBank(long id) {
+        PowerBank bank = powerBanks.search(id);
+        if (bank == null || "RENTED".equals(bank.getStatus()) || "RESERVED".equals(bank.getStatus())) return false;
+        Station station = findStation(bank.getStationId());
+        if (station != null) {
+            station.setTotalPowerBanks(Math.max(0, station.getTotalPowerBanks() - 1));
+            if ("AVAILABLE".equals(bank.getStatus()))
+                station.setAvailablePowerBanks(Math.max(0, station.getAvailablePowerBanks() - 1));
+        }
+        return powerBanks.delete(id);
+    }
+
+    public boolean updatePowerBankStatus(long id, String newStatus) {
         PowerBank bank = powerBanks.search(id);
         if (bank == null || newStatus == null) return false;
         String status = newStatus.trim().toUpperCase();
@@ -134,11 +142,21 @@ public class PowerBankService {
         return true;
     }
 
-    public boolean reservePowerBank(int customerId, int stationId) {
+    public boolean reservePowerBank(long customerId, long stationId) {
         Station station = findStation(stationId);
         if (customerId <= 0 || station == null || !station.isActive()) return false;
         PowerBank bank = findAvailableBank(stationId);
-        if (bank == null) return false;
+        if (bank != null && waitingRequests.findNextEligible(bank) != null) {
+            waitingRequests.enqueue(new powerbank.models.WaitingRequest(nextWaitingRequestId++, customerId,
+                    stationId, LocalDateTime.now().format(formatter), "WAITING"));
+            processNextWaiter(bank);
+            return false;
+        }
+        if (bank == null) {
+            waitingRequests.enqueue(new powerbank.models.WaitingRequest(nextWaitingRequestId++, customerId,
+                    stationId, LocalDateTime.now().format(formatter), "WAITING"));
+            return false;
+        }
         changeStatus(bank, "RESERVED");
         station.setAvailablePowerBanks(Math.max(0, station.getAvailablePowerBanks() - 1));
         Reservation reservation = new Reservation(nextReservationId++, customerId, stationId,
@@ -147,7 +165,7 @@ public class PowerBankService {
         return true;
     }
 
-    public boolean startRental(int customerId, int powerBankId) {
+    public boolean startRental(long customerId, long powerBankId) {
         PowerBank bank = powerBanks.search(powerBankId);
         if (bank == null || customerId <= 0) return false;
         Reservation reservation = reservations.findByPowerBank(customerId, powerBankId);
@@ -162,42 +180,42 @@ public class PowerBankService {
             if (station != null) station.setAvailablePowerBanks(Math.max(0, station.getAvailablePowerBanks() - 1));
         }
         changeStatus(bank, "RENTED");
-        addActiveRental(new ActiveRental(customerId, powerBankId, bank.getStationId(), LocalDateTime.now()));
+        activeRentals.insert(new RentalRecord(nextRentalId++, customerId, powerBankId,
+                bank.getStationId(), bank.getStationId(), LocalDateTime.now().format(formatter), null, 0));
         return true;
     }
 
-    public boolean returnPowerBank(int customerId, int powerBankId, int returnStationId) {
+    public boolean returnPowerBank(long customerId, long powerBankId, long returnStationId) {
         PowerBank bank = powerBanks.search(powerBankId);
         Station returnStation = findStation(returnStationId);
-        int activeIndex = findActiveRental(customerId, powerBankId);
+        RentalRecord active = activeRentals.searchByCustomerAndPowerBank(customerId, powerBankId);
         if (bank == null || returnStation == null || !returnStation.isActive()
-                || !"RENTED".equals(bank.getStatus()) || activeIndex < 0) return false;
+                || !"RENTED".equals(bank.getStatus()) || active == null) return false;
 
-        ActiveRental active = activeRentals[activeIndex];
         LocalDateTime end = LocalDateTime.now();
-        long minutes = Math.max(1, Duration.between(active.startTime, end).toMinutes());
-        Station startStation = findStation(active.startStationId);
+        LocalDateTime start = LocalDateTime.parse(active.getStartTime(), formatter);
+        long minutes = Math.max(1, Duration.between(start, end).toMinutes());
+        Station startStation = findStation(active.getStartStationId());
         double rate = startStation == null ? returnStation.getPricePerMinute() : startStation.getPricePerMinute();
         double cost = minutes * rate;
 
-        RentalRecord record = new RentalRecord(nextRentalId++, customerId, powerBankId,
-                active.startStationId, returnStationId, active.startTime.format(formatter),
-                end.format(formatter), cost);
-        rentalHistory.insert(record);
+        active.complete(returnStationId, end.format(formatter), cost);
+        activeRentals.delete(active.getId());
+        rentalHistory.insert(active);
 
-        if (active.startStationId != returnStationId && startStation != null)
+        if (active.getStartStationId() != returnStationId && startStation != null)
             startStation.setTotalPowerBanks(Math.max(0, startStation.getTotalPowerBanks() - 1));
-        if (active.startStationId != returnStationId)
+        if (active.getStartStationId() != returnStationId)
             returnStation.setTotalPowerBanks(returnStation.getTotalPowerBanks() + 1);
 
         bank.setStationId(returnStationId);
         changeStatus(bank, "AVAILABLE");
         returnStation.setAvailablePowerBanks(returnStation.getAvailablePowerBanks() + 1);
-        removeActiveRental(activeIndex);
+        processNextWaiter(bank);
         return true;
     }
 
-    public boolean cancelReservation(int reservationId) {
+    public boolean cancelReservation(long reservationId) {
         Reservation[] all = reservations.toArray();
         for (Reservation reservation : all) {
             if (reservation.getId() == reservationId && "PENDING".equals(reservation.getStatus())) {
@@ -207,7 +225,10 @@ public class PowerBankService {
                 if (bank != null && "RESERVED".equals(bank.getStatus())) {
                     changeStatus(bank, "AVAILABLE");
                     Station station = findStation(bank.getStationId());
-                    if (station != null) station.setAvailablePowerBanks(station.getAvailablePowerBanks() + 1);
+                    if (station != null) {
+                        station.setAvailablePowerBanks(station.getAvailablePowerBanks() + 1);
+                        processNextWaiter(bank);
+                    }
                 }
                 return true;
             }
@@ -221,6 +242,8 @@ public class PowerBankService {
     }
 
     public void displayInventory() { powerBanks.displayInOrder(); }
+    public void displayWaitingQueue() { waitingRequests.display(); }
+    public void displayActiveRentals() { activeRentals.display(); }
     public void displayRentalHistory() { rentalHistory.display(); }
     public void displayStatusHistory() { statusHistory.display(); }
     public void displayReservations() { reservations.display(); }
@@ -267,11 +290,16 @@ public class PowerBankService {
         System.out.println("Completed rentals: " + rentalHistory.count());
     }
 
-    private PowerBank findAvailableBank(int stationId) {
-        for (PowerBank bank : getPowerBanksSortedById()) {
-            if (bank.getStationId() == stationId && "AVAILABLE".equals(bank.getStatus())) return bank;
-        }
-        return null;
+    private PowerBank findAvailableBank(long stationId) { return powerBanks.findAvailable(stationId); }
+
+    private void processNextWaiter(PowerBank bank) {
+        var request = waitingRequests.processNext(bank);
+        if (request == null) return;
+        Station station = findStation(bank.getStationId());
+        if (station != null) station.setAvailablePowerBanks(Math.max(0, station.getAvailablePowerBanks() - 1));
+        statusHistory.insert(new StatusHistory(bank.getId(), "AVAILABLE", "RESERVED", LocalDateTime.now().format(formatter)));
+        reservations.enqueue(new Reservation(nextReservationId++, request.getCustomerId(), request.getPreferredStationId(),
+                bank.getId(), LocalDateTime.now().format(formatter), "PENDING"));
     }
 
     private void changeStatus(PowerBank bank, String newStatus) {
@@ -288,23 +316,4 @@ public class PowerBankService {
         stations = bigger;
     }
 
-    private void addActiveRental(ActiveRental rental) {
-        if (activeRentalCount == activeRentals.length) {
-            ActiveRental[] bigger = new ActiveRental[activeRentals.length * 2];
-            for (int i = 0; i < activeRentals.length; i++) bigger[i] = activeRentals[i];
-            activeRentals = bigger;
-        }
-        activeRentals[activeRentalCount++] = rental;
-    }
-
-    private int findActiveRental(int customerId, int powerBankId) {
-        for (int i = 0; i < activeRentalCount; i++)
-            if (activeRentals[i].customerId == customerId && activeRentals[i].powerBankId == powerBankId) return i;
-        return -1;
-    }
-
-    private void removeActiveRental(int index) {
-        for (int i = index; i < activeRentalCount - 1; i++) activeRentals[i] = activeRentals[i + 1];
-        activeRentals[--activeRentalCount] = null;
-    }
 }

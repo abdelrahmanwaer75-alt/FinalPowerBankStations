@@ -1,18 +1,18 @@
 package powerbank.models;
 
 public class Reservation {
-    private int id;
-    private int customerId;
-    private int stationId;
-    private int powerBankId;
+    private long id;
+    private long customerId;
+    private long stationId;
+    private long powerBankId;
     private String reservationDate;
     private String status;
 
-    public Reservation(int id, int customerId, int stationId, String date, String status) {
+    public Reservation(long id, long customerId, long stationId, String date, String status) {
         this(id, customerId, stationId, -1, date, status);
     }
 
-    public Reservation(int id, int customerId, int stationId, int powerBankId, String date, String status) {
+    public Reservation(long id, long customerId, long stationId, long powerBankId, String date, String status) {
         this.id = id;
         this.customerId = customerId;
         this.stationId = stationId;
@@ -21,10 +21,10 @@ public class Reservation {
         this.status = status;
     }
 
-    public int getId() { return id; }
-    public int getCustomerId() { return customerId; }
-    public int getStationId() { return stationId; }
-    public int getPowerBankId() { return powerBankId; }
+    public long getId() { return id; }
+    public long getCustomerId() { return customerId; }
+    public long getStationId() { return stationId; }
+    public long getPowerBankId() { return powerBankId; }
     public String getReservationDate() { return reservationDate; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

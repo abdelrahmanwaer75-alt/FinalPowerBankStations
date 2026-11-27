@@ -4,17 +4,19 @@ import powerbank.models.RentalRecord;
 
 public class RentalHistoryList {
     private ListNode head;
+    private int size;
 
     public void insert(RentalRecord record) {
         if (record == null) return;
         ListNode node = new ListNode(record);
-        if (head == null) { head = node; return; }
+        if (head == null) { head = node; size++; return; }
         ListNode current = head;
         while (current.next != null) current = current.next;
         current.next = node;
+        size++;
     }
 
-    public RentalRecord search(int id) {
+    public RentalRecord search(long id) {
         ListNode current = head;
         while (current != null) {
             RentalRecord record = (RentalRecord) current.data;
@@ -24,40 +26,7 @@ public class RentalHistoryList {
         return null;
     }
 
-    public boolean update(int id, RentalRecord updated) {
-        if (updated == null) return false;
-        ListNode current = head;
-        while (current != null) {
-            RentalRecord record = (RentalRecord) current.data;
-            if (record.getId() == id) {
-                current.data = updated;
-                return true;
-            }
-            current = current.next;
-        }
-        return false;
-    }
-
-    public boolean delete(int id) {
-        if (head == null) return false;
-        if (((RentalRecord) head.data).getId() == id) { head = head.next; return true; }
-        ListNode current = head;
-        while (current.next != null) {
-            if (((RentalRecord) current.next.data).getId() == id) {
-                current.next = current.next.next;
-                return true;
-            }
-            current = current.next;
-        }
-        return false;
-    }
-
-    public int count() {
-        int result = 0;
-        ListNode current = head;
-        while (current != null) { result++; current = current.next; }
-        return result;
-    }
+    public int count() { return size; }
 
     public RentalRecord[] toArray() {
         RentalRecord[] result = new RentalRecord[count()];

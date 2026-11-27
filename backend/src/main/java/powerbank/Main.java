@@ -50,25 +50,31 @@ public class Main {
             System.out.println("2. Search by ID");
             System.out.println("3. Add PowerBank");
             System.out.println("4. Change status (Available / Maintenance)");
+            System.out.println("5. Delete PowerBank");
             System.out.println("0. Back");
             choice = in.readInt("Choose: ");
             switch (choice) {
                 case 1: service.displayInventory(); break;
                 case 2: {
-                    PowerBank bank = service.searchPowerBank(in.readInt("PowerBank ID: "));
+                    PowerBank bank = service.searchPowerBank(in.readLong("PowerBank ID: "));
                     System.out.println(bank == null ? "Not found." : bank);
                     break;
                 }
                 case 3: {
-                    int id = in.readInt("PowerBank ID: ");
-                    int station = in.readInt("Station ID: ");
+                    long id = in.readLong("PowerBank ID: ");
+                    long station = in.readLong("Station ID: ");
                     System.out.println(service.addPowerBank(id, station) ? "Added." : "Could not add.");
                     break;
                 }
                 case 4: {
-                    int id = in.readInt("PowerBank ID: ");
+                    long id = in.readLong("PowerBank ID: ");
                     String status = in.readLine("New status (AVAILABLE/MAINTENANCE): ");
                     System.out.println(service.updatePowerBankStatus(id, status) ? "Updated." : "Could not update.");
+                    break;
+                }
+                case 5: {
+                    long id = in.readLong("PowerBank ID: ");
+                    System.out.println(service.deletePowerBank(id) ? "Deleted." : "Could not delete (not found or currently reserved/rented).");
                     break;
                 }
                 case 0: break;
@@ -85,22 +91,29 @@ public class Main {
             System.out.println("2. Display queue");
             System.out.println("3. Cancel reservation by ID");
             System.out.println("4. Cancel next reservation");
+            System.out.println("5. Display global waiting queue");
             System.out.println("0. Back");
             choice = in.readInt("Choose: ");
             switch (choice) {
                 case 1: {
-                    int customer = in.readInt("Customer ID: ");
-                    int station = in.readInt("Station ID: ");
-                    System.out.println(service.reservePowerBank(customer, station) ? "Reservation created." : "No available PowerBank or invalid data.");
+                    long customer = in.readLong("Customer ID: ");
+                    long station = in.readLong("Station ID: ");
+                    int waitingBefore = service.getWaitingRequests().count();
+                    boolean reserved = service.reservePowerBank(customer, station);
+                    if (reserved) System.out.println("Reservation created.");
+                    else if (service.getWaitingRequests().count() > waitingBefore)
+                        System.out.println("No device is available at this station. Customer added to the global waiting queue.");
+                    else System.out.println("Could not reserve: check customer and station IDs.");
                     break;
                 }
                 case 2: service.displayReservations(); break;
                 case 3: {
-                    int id = in.readInt("Reservation ID: ");
+                    long id = in.readLong("Reservation ID: ");
                     System.out.println(service.cancelReservation(id) ? "Cancelled." : "Reservation not found.");
                     break;
                 }
                 case 4: System.out.println(service.cancelNextReservation() ? "Next reservation cancelled." : "Queue is empty."); break;
+                case 5: service.displayWaitingQueue(); break;
                 case 0: break;
                 default: System.out.println("Invalid choice.");
             }
@@ -113,24 +126,26 @@ public class Main {
             System.out.println("\\n--- RENTALS ---");
             System.out.println("1. Start rental");
             System.out.println("2. Return PowerBank");
-            System.out.println("3. Display rental history");
+            System.out.println("3. Display active rentals");
+            System.out.println("4. Display rental history");
             System.out.println("0. Back");
             choice = in.readInt("Choose: ");
             switch (choice) {
                 case 1: {
-                    int customer = in.readInt("Customer ID: ");
-                    int bank = in.readInt("PowerBank ID: ");
+                    long customer = in.readLong("Customer ID: ");
+                    long bank = in.readLong("PowerBank ID: ");
                     System.out.println(service.startRental(customer, bank) ? "Rental started." : "Could not start rental.");
                     break;
                 }
                 case 2: {
-                    int customer = in.readInt("Customer ID: ");
-                    int bank = in.readInt("PowerBank ID: ");
-                    int station = in.readInt("Return station ID: ");
+                    long customer = in.readLong("Customer ID: ");
+                    long bank = in.readLong("PowerBank ID: ");
+                    long station = in.readLong("Return station ID: ");
                     System.out.println(service.returnPowerBank(customer, bank, station) ? "Returned successfully." : "Return failed.");
                     break;
                 }
-                case 3: service.displayRentalHistory(); break;
+                case 3: service.displayActiveRentals(); break;
+                case 4: service.displayRentalHistory(); break;
                 case 0: break;
                 default: System.out.println("Invalid choice.");
             }
@@ -151,21 +166,21 @@ public class Main {
             switch (choice) {
                 case 1: service.displayStations(); break;
                 case 2: {
-                    int id = in.readInt("Station ID: ");
+                    long id = in.readLong("Station ID: ");
                     String name = in.readLine("Station name: ");
                     double price = in.readDouble("Price per minute (EGP): ");
                     System.out.println(service.addStation(new Station(id, name, 0, 0, true, price)) ? "Added." : "Could not add.");
                     break;
                 }
                 case 3: {
-                    int id = in.readInt("Station ID: ");
+                    long id = in.readLong("Station ID: ");
                     String name = in.readLine("New name: ");
                     double price = in.readDouble("New price per minute (EGP): ");
                     System.out.println(service.updateStation(id, name, price) ? "Updated." : "Could not update.");
                     break;
                 }
                 case 4: {
-                    int id = in.readInt("Station ID: ");
+                    long id = in.readLong("Station ID: ");
                     System.out.println(service.deactivateStation(id) ? "Deactivated." : "Station not found.");
                     break;
                 }
@@ -198,7 +213,7 @@ public class Main {
         System.out.println("1. PowerBanks by ID");
         System.out.println("2. Stations by availability");
         System.out.println("3. Reservations by date");
-        System.out.println("4. Rental records by end date");
+        System.out.println("4. Rental records by start date");
         choice = input.readInt("Choose: ");
         switch (choice) {
             case 1:

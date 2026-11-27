@@ -17,7 +17,7 @@ public class PowerBankBST {
         return node;
     }
 
-    public PowerBank search(int id) {
+    public PowerBank search(long id) {
         TreeNode current = root;
         while (current != null) {
             if (id == current.data.getId()) return current.data;
@@ -27,7 +27,7 @@ public class PowerBankBST {
         return null;
     }
 
-    public boolean update(int id, PowerBank updated) {
+    public boolean update(long id, PowerBank updated) {
         if (updated == null || search(id) == null) return false;
         if (id != updated.getId() && search(updated.getId()) != null) return false;
         root = deleteNode(root, id);
@@ -35,13 +35,13 @@ public class PowerBankBST {
         return true;
     }
 
-    public boolean delete(int id) {
+    public boolean delete(long id) {
         if (search(id) == null) return false;
         root = deleteNode(root, id);
         return true;
     }
 
-    private TreeNode deleteNode(TreeNode node, int id) {
+    private TreeNode deleteNode(TreeNode node, long id) {
         if (node == null) return null;
         if (id < node.data.getId()) node.left = deleteNode(node.left, id);
         else if (id > node.data.getId()) node.right = deleteNode(node.right, id);
@@ -66,6 +66,32 @@ public class PowerBankBST {
             return;
         }
         displayInOrder(root);
+    }
+
+    /** Returns a snapshot of the inventory ordered by PowerBank ID. */
+    public PowerBank[] inOrderTraversal() {
+        PowerBank[] result = new PowerBank[count()];
+        copyToArray(result, new int[]{0});
+        return result;
+    }
+
+    /** Finds the lowest-ID available unit at the requested station. */
+    public PowerBank findAvailable(long stationId) {
+        return findAvailable(root, stationId);
+    }
+
+    /** Finds the lowest-ID available unit at any station. */
+    public PowerBank findAvailable() {
+        return findAvailable(root, null);
+    }
+
+    private PowerBank findAvailable(TreeNode node, Long stationId) {
+        if (node == null) return null;
+        PowerBank left = findAvailable(node.left, stationId);
+        if (left != null) return left;
+        PowerBank bank = node.data;
+        if ("AVAILABLE".equals(bank.getStatus()) && (stationId == null || bank.getStationId() == stationId)) return bank;
+        return findAvailable(node.right, stationId);
     }
 
     private void displayInOrder(TreeNode node) {

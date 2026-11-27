@@ -301,7 +301,10 @@ async function loadData() {
         STATIONS = (window.STATIONS_DATA || []).map((s) => ({
             ...s, price: 0.133333
         }));
-        showBanner(`Backend not reachable (${err.message}). Showing sample data.`);
+        const reason = err.network
+            ? 'Backend not reachable. Check that it is running on http://localhost:8080.'
+            : `Station data could not be loaded: ${err.message}`;
+        showBanner(`${reason} Showing sample data.`);
     }
 }
 

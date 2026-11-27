@@ -41,7 +41,6 @@ Static HTML, CSS, and JavaScript. Talks to the Spring Boot backend in `../backen
 ## Shared files
 - `js/api.js`: the only place that calls `fetch`. Drops the token on a 401 response.
 - `js/common.js`: sign-in state, station loading, reserving, and small helpers.
-- `js/header.js`: shared header, theme and language preferences (not yet used on every page).
 - `css/tokens.css`: design tokens for light and dark themes.
 
 ## Remaining gaps

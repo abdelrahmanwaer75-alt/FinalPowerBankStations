@@ -1,21 +1,21 @@
 package powerbank.models;
 
 public class PowerBank {
-    private int id;
-    private int stationId;
+    private long id;
+    private long stationId;
     private String status;
 
-    public PowerBank(int id, String status, int stationId) {
+    public PowerBank(long id, String status, long stationId) {
         this.id = id;
         this.status = status;
         this.stationId = stationId;
     }
 
-    public int getId() { return id; }
-    public int getStationId() { return stationId; }
+    public long getId() { return id; }
+    public long getStationId() { return stationId; }
     public String getStatus() { return status; }
-    public void setId(int id) { this.id = id; }
-    public void setStationId(int stationId) { this.stationId = stationId; }
+    public void setId(long id) { this.id = id; }
+    public void setStationId(long stationId) { this.stationId = stationId; }
     public void setStatus(String status) { this.status = status; }
 
     @Override

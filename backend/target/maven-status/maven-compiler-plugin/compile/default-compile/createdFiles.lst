@@ -36,8 +36,8 @@ com\powerbank\dto\AddPowerBanksRequest.class
 com\powerbank\entity\AuditLog$AuditResult.class
 com\powerbank\repository\ReservationRepository.class
 com\powerbank\repository\RentalPricingSnapshotRepository.class
-powerbank\services\PowerBankService$ActiveRental.class
 com\powerbank\dto\WaitingListResponse.class
+powerbank\DatabaseMain$Snapshot.class
 com\powerbank\controller\AuthController.class
 powerbank\linkedlist\ListNode.class
 com\powerbank\dto\PricingResponse.class
@@ -49,6 +49,7 @@ com\powerbank\entity\AuthToken.class
 com\powerbank\entity\RentalReturn.class
 com\powerbank\service\RentalService.class
 com\powerbank\service\WaitingListService.class
+powerbank\models\WaitingRequest.class
 com\powerbank\entity\PricingPlan.class
 com\powerbank\dto\ActionResponse.class
 com\powerbank\controller\ReturnController.class
@@ -87,6 +88,7 @@ com\powerbank\entity\RentalStatus.class
 com\powerbank\service\AuthService.class
 com\powerbank\entity\Station.class
 powerbank\Main.class
+powerbank\linkedlist\ActiveRentalList.class
 powerbank\utils\InputHelper.class
 powerbank\bst\TreeNode.class
 com\powerbank\repository\InspectionImageRepository.class
@@ -99,6 +101,7 @@ com\powerbank\dto\IdentifierRequest.class
 com\powerbank\controller\WaitingListController.class
 com\powerbank\dto\AuthResponse.class
 com\powerbank\dto\ReservationResponse.class
+powerbank\queue\GlobalWaitingQueue.class
 com\powerbank\entity\AuthTokenPurpose.class
 com\powerbank\dto\StartRentalRequest.class
 com\powerbank\controller\StationController.class
@@ -113,3 +116,4 @@ powerbank\sorting\Sorting.class
 com\powerbank\entity\AuditLog.class
 com\powerbank\entity\UserAccount.class
 com\powerbank\repository\PowerBankRepository.class
+powerbank\DatabaseMain.class

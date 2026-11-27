@@ -30,7 +30,7 @@ public class ReservationQueue {
         return isEmpty() ? null : (Reservation) front.data;
     }
 
-    public Reservation findByPowerBank(int customerId, int powerBankId) {
+    public Reservation findByPowerBank(long customerId, long powerBankId) {
         QueueNode current = front;
         while (current != null) {
             Reservation reservation = (Reservation) current.data;
@@ -42,7 +42,7 @@ public class ReservationQueue {
         return null;
     }
 
-    public boolean removeById(int reservationId) {
+    public boolean removeById(long reservationId) {
         if (front == null) return false;
         if (((Reservation) front.data).getId() == reservationId) {
             dequeue();

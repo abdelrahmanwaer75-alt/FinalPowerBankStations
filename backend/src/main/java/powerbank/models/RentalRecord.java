@@ -1,17 +1,17 @@
 package powerbank.models;
 
 public class RentalRecord {
-    private int id;
-    private int customerId;
-    private int powerBankId;
-    private int startStationId;
-    private int returnStationId;
+    private long id;
+    private long customerId;
+    private long powerBankId;
+    private long startStationId;
+    private long returnStationId;
     private String startTime;
     private String endTime;
     private double cost;
 
-    public RentalRecord(int id, int customerId, int powerBankId, int startStationId,
-                        int returnStationId, String start, String end, double cost) {
+    public RentalRecord(long id, long customerId, long powerBankId, long startStationId,
+                        long returnStationId, String start, String end, double cost) {
         this.id = id;
         this.customerId = customerId;
         this.powerBankId = powerBankId;
@@ -22,14 +22,19 @@ public class RentalRecord {
         this.cost = cost;
     }
 
-    public int getId() { return id; }
-    public int getCustomerId() { return customerId; }
-    public int getPowerBankId() { return powerBankId; }
-    public int getStartStationId() { return startStationId; }
-    public int getReturnStationId() { return returnStationId; }
+    public long getId() { return id; }
+    public long getCustomerId() { return customerId; }
+    public long getPowerBankId() { return powerBankId; }
+    public long getStartStationId() { return startStationId; }
+    public long getReturnStationId() { return returnStationId; }
     public String getStartTime() { return startTime; }
     public String getEndTime() { return endTime; }
     public double getCost() { return cost; }
+    public void complete(long returnedTo, String end, double finalCost) {
+        this.returnStationId = returnedTo;
+        this.endTime = end;
+        this.cost = finalCost;
+    }
 
     @Override
     public String toString() {

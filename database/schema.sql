@@ -114,6 +114,38 @@ CREATE TABLE powerbanks (
     INDEX idx_powerbanks_station_status (station_id, status)
 ) ENGINE=InnoDB;
 
+-- Append-only powerbank status events used by the Data Structures history list.
+CREATE TABLE powerbank_status_history (
+    id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    powerbank_id    BIGINT UNSIGNED NOT NULL,
+    old_status      VARCHAR(40) NULL,
+    new_status      VARCHAR(40) NOT NULL,
+    changed_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_pb_status_history_bank FOREIGN KEY (powerbank_id)
+        REFERENCES powerbanks(id) ON DELETE RESTRICT,
+    INDEX idx_pb_status_history_bank_time (powerbank_id, changed_at, id)
+) ENGINE=InnoDB;
+
+DELIMITER $$
+CREATE TRIGGER trg_powerbanks_status_insert
+AFTER INSERT ON powerbanks
+FOR EACH ROW
+BEGIN
+    INSERT INTO powerbank_status_history (powerbank_id, old_status, new_status)
+    VALUES (NEW.id, NULL, NEW.status);
+END$$
+
+CREATE TRIGGER trg_powerbanks_status_update
+AFTER UPDATE ON powerbanks
+FOR EACH ROW
+BEGIN
+    IF NOT (OLD.status <=> NEW.status) THEN
+        INSERT INTO powerbank_status_history (powerbank_id, old_status, new_status)
+        VALUES (NEW.id, OLD.status, NEW.status);
+    END IF;
+END$$
+DELIMITER ;
+
 -- ---------------------------------------------------------------------
 -- 8. reservations
 -- Generated key enforces one open reservation per PowerBank. A customer may

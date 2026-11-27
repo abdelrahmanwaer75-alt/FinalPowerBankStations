@@ -86,6 +86,9 @@ PB.updateSignInLink = function () {
 /* Converts the API station shape to the one the map and lists use. */
 PB.loadStations = async function () {
     const list = await PB.api.stations.list();
+    if (!Array.isArray(list)) throw new Error('The stations API did not return a station list.');
+    if (list.some((station) => !station || station.id == null))
+        throw new Error('The stations API returned a station without an ID.');
     const [pricing, availability] = await Promise.all([
         PB.api.pricing.active().catch(() => null),
         Promise.all(list.map((s) => PB.api.stations.availability(s.id).catch(() => null)))

@@ -1,18 +1,18 @@
 package powerbank.models;
 
 public class Station {
-    private int id;
+    private long id;
     private String name;
     private int totalPowerBanks;
     private int availablePowerBanks;
     private boolean active;
     private double pricePerMinute;
 
-    public Station(int id, String name, int total, int available) {
+    public Station(long id, String name, int total, int available) {
         this(id, name, total, available, true, 0.166667);
     }
 
-    public Station(int id, String name, int total, int available, boolean active, double pricePerMinute) {
+    public Station(long id, String name, int total, int available, boolean active, double pricePerMinute) {
         this.id = id;
         this.name = name;
         this.totalPowerBanks = total;
@@ -21,7 +21,7 @@ public class Station {
         this.pricePerMinute = pricePerMinute;
     }
 
-    public int getId() { return id; }
+    public long getId() { return id; }
     public String getName() { return name; }
     public int getTotalPowerBanks() { return totalPowerBanks; }
     public int getAvailablePowerBanks() { return availablePowerBanks; }

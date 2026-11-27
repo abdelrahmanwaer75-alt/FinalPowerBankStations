@@ -18,6 +18,17 @@ public class InputHelper {
         return value;
     }
 
+    public long readLong(String message) {
+        System.out.print(message);
+        while (!scanner.hasNextLong()) {
+            scanner.nextLine();
+            System.out.print("Enter a valid whole number: ");
+        }
+        long value = scanner.nextLong();
+        scanner.nextLine();
+        return value;
+    }
+
     public double readDouble(String message) {
         System.out.print(message);
         while (!scanner.hasNextDouble()) {

@@ -5,6 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "DatabaseMain",
+            "request": "launch",
+            "mainClass": "powerbank.DatabaseMain",
+            "projectName": "powerbank-stations"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "powerbank.Main",
+            "projectName": "powerbank-stations"
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
