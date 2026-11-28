@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('profile-form').addEventListener('submit', saveProfile);
     document.getElementById('password-form').addEventListener('submit', changePassword);
     document.getElementById('logout').addEventListener('click', logout);
-    document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => savePrefs({ languagePreference: b.dataset.lang })));
+    
     document.querySelectorAll('[data-theme]').forEach((b) => b.addEventListener('click', () => savePrefs({ themePreference: b.dataset.theme })));
 
     try {
@@ -42,7 +42,7 @@ function render() {
     setText('meta', profile.email);
     setText('since', profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—');
     setText('avatar', initials(profile.fullName));
-    markSeg('[data-lang]', 'lang', profile.languagePreference);
+    
     markSeg('[data-theme]', 'theme', profile.themePreference);
     try { localStorage.setItem('pb_theme', document.documentElement.dataset.theme); } catch (_) { /* Preference remains on the account. */ }
 }
@@ -62,7 +62,7 @@ async function saveProfile(event) {
         profile = await PB.api.customer.update({
             fullName,
             phone: phone || null,
-            languagePreference: profile.languagePreference,
+            
             themePreference: profile.themePreference
         });
         render();
